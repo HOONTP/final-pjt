@@ -73,5 +73,5 @@ class Review(models.Model):
     # updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 
-class Actor(models.Model):
-    name = models.CharField(max_length=100)
+# class Actor(models.Model):
+#     name = models.CharField(max_length=100)

@@ -3,9 +3,9 @@ from . import views
 
 app_name = 'movies' # 'movies:---' 로 경로 호출 시 사용?
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('<int:movie_pk>/', views.detail, name='detail'),
-    path('recommended/', views.recommended, name='recommended'),
+    # path('', views.index, name='index'),
+    # path('<int:movie_pk>/', views.detail, name='detail'),
+    # path('recommended/', views.recommended, name='recommended'),
     
     path('api/v1/movies/', views.movie_list),
     path('api/v1/movies/<int:movie_pk>/', views.movie_detail),

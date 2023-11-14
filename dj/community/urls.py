@@ -12,4 +12,15 @@ urlpatterns = [
         name='create_comment',
     ),
     path('<int:review_pk>/like/', views.like, name='like'),
+
+    
+    path('api/v1/articles/', views.article), # 모든 게시글 조회 및 입력
+    path('api/v1/articles/<int:article_pk>/', views.article_detail), # 게시글 상세 조회
+    path('api/v1/comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기
+    path('api/v1/articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'
+    path('api/v1/articles/<int:article_pk>/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
+
+    path('<int:movie_pk>/likes/<int:user_pk>/', views.add_user_to_movie_likes),
+
+
 ]
