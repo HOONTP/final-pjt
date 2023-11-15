@@ -1,23 +1,53 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import ArticleView from '@/views/ArticleView.vue'
+import DetailView from '@/views/DetailView.vue'
+import CreateView from '@/views/CreateView.vue'
+import SignUpView from '@/views/SignUpView.vue'
+import LogInView from '@/views/LogInView.vue'
+import { useCounterStore } from '@/stores/counter'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      name: 'ArticleView',
+      component: ArticleView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/articles/:id',
+      name: 'DetailView',
+      component: DetailView
+    },
+    {
+      path: '/create',
+      name: 'CreateView',
+      component: CreateView
+    },
+    {
+      path: '/signup',
+      name: 'SignUpView',
+      component: SignUpView
+    },
+    {
+      path: '/login',
+      name: 'LogInView',
+      component: LogInView
     }
   ]
 })
+
+router.beforeEach((to, from) => {
+  const store = useCounterStore()
+  if (to.name === 'ArticleView' && !store.isLogin) {
+    windeow.alert('로그인이 필요합니다')
+    return { name: 'LogInView' }
+  }
+  if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
+    window. alert('이미 로그인이 되어있습니다.')
+    return { name: 'ArticleView' } // 그냥 버튼을 막기만하면 안되나??;
+  }
+})
+
 
 export default router

@@ -35,7 +35,7 @@ genre
 """
 class Movie(models.Model):
     # genre_ids = models.CharField(max_length=10)
-    id = models.IntegerField()
+    id = models.IntegerField(primary_key=True)
 
     genre_ids = models.ManyToManyField("movies.Genre", related_name="genremovie")#통합조회시
     genres = models.JSONField()# 단일 조회시 안되면 빼자. 어차피 상세는 따로받는게 나을듯

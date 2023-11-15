@@ -10,7 +10,8 @@ from django.contrib.auth import logout as auth_logout
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 
@@ -69,6 +70,7 @@ def log(request):
 #     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def follow(request, user_pk):
     User = get_user_model()
     person = User.objects.get(pk=user_pk)
