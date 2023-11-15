@@ -24,6 +24,7 @@ urlpatterns = [
     path('community/', include('community.urls')),
     path('accounts/', include('accounts.urls')),
     
+    
     # path('accounts/', include('dj_rest_auth.urls')),
     # path('accounts/signup/', include('dj_rest_auth.registration.urls')),
     # path('<int:user_pk>/password/', accountsviews.change_password, name='change_password'),
