@@ -1,19 +1,20 @@
 <template>
   <div>
+    <h1>Signup</h1>
     <form @submit.prevent="signUp">
-    <input type="text" v-model.trim="username">
-    <input type="password" v-model.trim="password1">
-    <input type="password" v-model.trim="password2">
-    <input type="submit">
+      <input type="text" v-model.trim="username">
+      <input type="password" v-model.trim="password1">
+      <input type="password" v-model.trim="password2">
+      <input type="submit">
     </form>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { userCounterStore } from '@/stores/counter'
+import { useCounterStore } from '@/stores/counter'
 
-const store = userCounterStore()
+const store = useCounterStore()
 const username = ref(null)
 const password1 = ref(null)
 const password2 = ref(null)

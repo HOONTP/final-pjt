@@ -4,6 +4,7 @@ import DetailView from '@/views/DetailView.vue'
 import CreateView from '@/views/CreateView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
+
 import { useCounterStore } from '@/stores/counter'
 
 const router = createRouter({
@@ -40,14 +41,13 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   const store = useCounterStore()
   if (to.name === 'ArticleView' && !store.isLogin) {
-    windeow.alert('로그인이 필요합니다')
+    window.alert('로그인이 필요합니다.')
     return { name: 'LogInView' }
   }
   if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin)) {
-    window. alert('이미 로그인이 되어있습니다.')
-    return { name: 'ArticleView' } // 그냥 버튼을 막기만하면 안되나??;
+    window.alert('이미 로그인 했습니다.')
+    return { name: 'ArticleView' }
   }
 })
-
 
 export default router

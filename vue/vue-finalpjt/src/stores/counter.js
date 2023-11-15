@@ -1,13 +1,14 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 export const useCounterStore = defineStore('counter', () => {
+  const router = useRouter()
   const articles = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
-
-
+  
   const isLogin = computed(() => {
     if (token.value === null) {
       return false
@@ -34,9 +35,8 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  const signup = function (payload) {
+  const signUp = function (payload) {
     const { username, password1, password2 } = payload
-
     axios({
       method: 'post',
       url: `${API_URL}/accounts/signup/`,
@@ -44,12 +44,14 @@ export const useCounterStore = defineStore('counter', () => {
         username, password1, password2
       }
     })
-      .then(res => {
-        console.log('회원가입이 완료')
+      .then((res) => {
+        console.log(res)
         const password = password1
         logIn({ username, password })
       })
-      .catch(err => console.log(err))
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   const logIn = function (payload) {
@@ -62,14 +64,28 @@ export const useCounterStore = defineStore('counter', () => {
         username, password
       }
     })
-      .then(res => {
-        console,log('로그인 완')
+      .then((res) => {
         console.log(res.data)
         token.value = res.data.key
-        router.push({ name: 'ArticleView'}) // 로그인 후 보내기
+        router.push({ name: 'ArticleView' })
       })
-      .catch(err => console.log(err))
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  return { articles, API_URL, getArticles, signup, logIn, token, isLogin }
+  const logOut = function () {
+    axios({
+      method: 'post',
+      url: `${API_URL}/accounts/logout/`,
+    })
+      .then((res) => {
+        token.value = null
+        router.push({ name: 'ArticleView' })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  return { articles, API_URL, getArticles, signUp, logIn, token, isLogin, logOut }
 }, { persist: true })

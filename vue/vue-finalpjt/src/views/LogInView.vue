@@ -3,9 +3,7 @@
     <h1>Login page</h1>
     <form @submit.prevent="logIn">
       <input type="text" id="username" v-model.trim="username"><br>
-
       <input type="password" id="password" v-model.trim="password"><br>
-
       <input type="submit" value="logIn">
     </form>
   </div>
@@ -13,9 +11,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import { userCounterStore } from '@/stores/counter'
+import { useCounterStore } from '@/stores/counter'
 
-const store = userCounterStore()
+const store = useCounterStore()
 
 const username = ref(null)
 const password = ref(null)
