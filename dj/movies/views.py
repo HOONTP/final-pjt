@@ -1,15 +1,15 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Movie, Review, Actor
+from .models import Movie, Review
 from django.contrib.auth import get_user_model as User
-from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer, ActorSerializer
+from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
 
 
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view
-
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 

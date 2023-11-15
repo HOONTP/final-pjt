@@ -16,7 +16,7 @@
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-
+import { RouterView, RouterLink } from 'vue-router'
 const store = useCounterStore()
 </script>
 

@@ -8,6 +8,7 @@ export const useCounterStore = defineStore('counter', () => {
   const articles = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
+  
   const isLogin = computed(() => {
     if (token.value === null) {
       return false
@@ -36,7 +37,6 @@ export const useCounterStore = defineStore('counter', () => {
 
   const signUp = function (payload) {
     const { username, password1, password2 } = payload
-
     axios({
       method: 'post',
       url: `${API_URL}/accounts/signup/`,
@@ -87,6 +87,5 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-
   return { articles, API_URL, getArticles, signUp, logIn, token, isLogin, logOut }
 }, { persist: true })

@@ -5,6 +5,8 @@ import CreateView from '@/views/CreateView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 
+import { useCounterStore } from '@/stores/counter'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,8 +37,6 @@ const router = createRouter({
     }
   ]
 })
-
-import { useCounterStore } from '@/stores/counter'
 
 router.beforeEach((to, from) => {
   const store = useCounterStore()

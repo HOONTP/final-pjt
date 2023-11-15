@@ -23,12 +23,10 @@ const signUp = function () {
   const payload = {
     username: username.value,
     password1: password1.value,
-    password2: password2.value
+    password2: password2.value,
   }
   store.signUp(payload)
 }
-
-
 </script>
 
 <style>
