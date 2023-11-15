@@ -39,7 +39,7 @@ export const useCounterStore = defineStore('counter', () => {
     const { username, password1, password2 } = payload
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/signup/`,
+      url: `${API_URL}/accounts/user/`,
       data: {
         username, password1, password2
       }
@@ -59,13 +59,13 @@ export const useCounterStore = defineStore('counter', () => {
 
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/login/`,
+      url: `${API_URL}/accounts/log/`,
       data: {
         username, password
       }
     })
       .then((res) => {
-        console.log(res.data)
+        console.log(res)
         token.value = res.data.key
         router.push({ name: 'ArticleView' })
       })
@@ -76,8 +76,8 @@ export const useCounterStore = defineStore('counter', () => {
 
   const logOut = function () {
     axios({
-      method: 'post',
-      url: `${API_URL}/accounts/logout/`,
+      method: 'delete',
+      url: `${API_URL}/accounts/log/`,
     })
       .then((res) => {
         token.value = null
