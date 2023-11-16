@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Article Page</h1>
-    <RouterLink :to="{ name: 'CreateView' }">
+    <RouterLink :to="{ name: 'ArticleCreateView' }">
       [CREATE]
     </RouterLink>
     <ArticleList />
@@ -12,7 +12,7 @@
 import { onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { RouterLink } from 'vue-router'
-import ArticleList from '@/components/ArticleList.vue'
+import ArticleList from '@/components/community/ArticleList.vue'
 
 const store = useCounterStore()
 
