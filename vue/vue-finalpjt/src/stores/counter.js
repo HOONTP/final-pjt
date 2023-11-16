@@ -8,6 +8,7 @@ export const useCounterStore = defineStore('counter', () => {
   const articles = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
+  const profileData = ref()
   
   const isLogin = computed(() => {
     if (token.value === null) {
@@ -17,29 +18,11 @@ export const useCounterStore = defineStore('counter', () => {
     }
   })
 
-  // DRF에 article 조회 요청을 보내는 action
-  const getArticles = function () {
-    axios({
-      method: 'get',
-      url: `${API_URL}/api/v1/articles/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
-    })
-      .then((res) =>{
-        // console.log(res)
-        articles.value = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-
   const signUp = function (payload) {
     const { username, password1, password2 } = payload
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/signup/`,
+      url: `${API_URL}/accounts/user/`,
       data: {
         username, password1, password2
       }
@@ -59,13 +42,13 @@ export const useCounterStore = defineStore('counter', () => {
 
     axios({
       method: 'post',
-      url: `${API_URL}/accounts/login/`,
+      url: `${API_URL}/accounts/log/`,
       data: {
         username, password
       }
     })
       .then((res) => {
-        console.log(res.data)
+        console.log(res)
         token.value = res.data.key
         router.push({ name: 'ArticleView' })
       })
@@ -76,8 +59,8 @@ export const useCounterStore = defineStore('counter', () => {
 
   const logOut = function () {
     axios({
-      method: 'post',
-      url: `${API_URL}/accounts/logout/`,
+      method: 'delete',
+      url: `${API_URL}/accounts/log/`,
     })
       .then((res) => {
         token.value = null
@@ -87,5 +70,41 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-  return { articles, API_URL, getArticles, signUp, logIn, token, isLogin, logOut }
+
+  const profileDetail = function (user_pk) {
+    axios({
+      method: 'GET',
+      url: `${API_URL}/accounts/${user_pk}/person/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) => {
+        profileData.value = res
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  
+  // DRF에 article 조회 요청을 보내는 action
+  const getArticles = function () {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/articles/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        // console.log(res)
+        articles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  
+  return { API_URL, signUp, logIn, token, isLogin, logOut, profileDetail, profileData, 
+    getArticles, articles, }
 }, { persist: true })
