@@ -2,10 +2,16 @@
   <div>
     <h1>Signup</h1>
     <form @submit.prevent="signUp">
-      <input type="text" v-model.trim="username">
-      <input type="password" v-model.trim="password1">
+      <label for="username">username : </label>
+      <input type="text" v-model.trim="username"><br>
+
+      <label for="password1">password : </label>
+      <input type="password" v-model.trim="password1"><br>
+
+      <label for="password2">password confirmation : </label>
       <input type="password" v-model.trim="password2">
-      <input type="submit">
+
+      <input type="submit" value="SingUp">
     </form>
   </div>
 </template>
@@ -29,6 +35,5 @@ const signUp = function () {
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>

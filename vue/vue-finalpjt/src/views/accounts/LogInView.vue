@@ -2,8 +2,12 @@
   <div>
     <h1>Login page</h1>
     <form @submit.prevent="logIn">
+      <label for="username">username : </label>
       <input type="text" id="username" v-model.trim="username"><br>
+
+      <label for="password">password : </label>
       <input type="password" id="password" v-model.trim="password"><br>
+      
       <input type="submit" value="logIn">
     </form>
   </div>
@@ -27,6 +31,5 @@ const logIn = function () {
 }
 </script>
 
-<style>
-
+<style scoped>
 </style>

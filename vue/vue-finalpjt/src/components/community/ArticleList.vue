@@ -11,7 +11,7 @@
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-import ArticleListItem from '@/components/ArticleListItem.vue'
+import ArticleListItem from '@/components/community/ArticleListItem.vue'
 
 const store = useCounterStore()
 console.log(store.articles)

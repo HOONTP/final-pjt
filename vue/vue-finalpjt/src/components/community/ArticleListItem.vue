@@ -3,7 +3,7 @@
     <h5>{{ article.id }}</h5>
     <p>{{ article.title }}</p>
     <p>{{ article.content }}</p>
-    <RouterLink :to="{ name: 'DetailView', params: { id: article.id }}">
+    <RouterLink :to="{ name: 'ArticleDetailView', params: { id: article.id }}">
       [Detail]
     </RouterLink>
     <hr>
