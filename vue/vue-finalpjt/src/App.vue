@@ -6,7 +6,7 @@
 
       <!-- 로그인 한 경우 -->
       <div v-if="store.isLogin">
-        <RouterLink :to="{ name: 'ProfileView' }">프로필</RouterLink> |
+        <RouterLink :to="{ name: 'ProfileView', params: { nickName: 'desired-username' } }">프로필</RouterLink> |
         <form @submit.prevent="store.logOut">
         <input type="submit" value="로그아웃">
         </form>
@@ -19,7 +19,6 @@
       </div>
     </nav>
   </header>
-
   <RouterView />
 </template>
 

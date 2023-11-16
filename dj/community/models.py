@@ -1,8 +1,11 @@
 from django.db import models
 from django.conf import settings
 
-
+class Board(models.Model):
+    name = models.CharField(max_length=255)
+    
 class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들 수 있나?
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=100)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
