@@ -16,9 +16,9 @@ import ArticleList from '@/components/ArticleList.vue'
 
 const store = useCounterStore()
 
-onMounted(() => {
-  store.getArticles()
-})
+// onMounted(() => {
+//   store.getArticles()
+// })
 
 </script>
 

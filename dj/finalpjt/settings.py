@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'rest_framework.authtoken',
+    # 'django_extensions',
 
     # 'dj_rest_auth',
 
@@ -158,7 +159,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -180,3 +181,8 @@ MEDIA_URL = 'media/'
 #     'SCHEMA_PATH_FUNC': 'your_project.views.schema_view',
 #     # 다른 설정들...
 # }
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}
