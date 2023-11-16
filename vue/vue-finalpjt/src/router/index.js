@@ -6,21 +6,21 @@ import LogInView from '@/views/accounts/LogInView.vue'
 import SignUpView from '@/views/accounts/SignUpView.vue'
 
 // Community
-import ArticleView from '@/views/community/ArticleView.vue'
+import CommunityView from '@/views/community/CommunityView.vue'
 import ArticleCreateView from '@/views/community/ArticleCreateView.vue'
 import ArticleDetailView from '@/views/community/ArticleDetailView.vue'
-// import ArticleEditView from '@/views/community/ArticleEditView.vue'
+import ArticleEditView from '@/views/community/ArticleEditView.vue'
 
 // Movie
-import MovieHomeView from '@/views/movies/MovieHomeView.vue'
-import MovieDetailView from '@/views/movies/MovieDetailView.vue'
+import MovieView from '@/views/movie/MovieView.vue'
+import MovieDetailView from '@/views/movie/MovieDetailView.vue'
 
 // Profile
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
 import ProfileBookmarkView from '@/views/profile/ProfileBookmarkView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
 import ProfileLikeView from '@/views/profile/ProfileLikeView.vue'
-
+import ProfileView from '@/views/profile/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,33 +37,32 @@ const router = createRouter({
       component: SignUpView
     },
 
-    // Community
     {
       path: '/',
-      name: 'ArticleView',
-      component: ArticleView
+      name: 'CommunityView',
+      component: CommunityView
     },
     {
       path: '/create',
-      name: 'CreateView',
+      name: 'ArticleCreateView',
       component: ArticleCreateView
     },
     {
       path: '/articles/:id',
-      name: 'DetailView',
+      name: 'ArticleDetailView',
       component: ArticleDetailView
     },
-    // {
-    //   path: '/articles/:id/edit',
-    //   name: 'EditView',
-    //   component: ArticleEditView
-    // },
+    {
+      path: '/articles/:id/edit',
+      name: 'ArticleEditView',
+      component: ArticleEditView
+    },
 
     // Movie
     {
       path: '/movie',
-      name: 'MovieHomeView',
-      component: MovieHomeView
+      name: 'MovieView',
+      component: MovieView
     },
     {
       path: '/movie/:movieId',
@@ -73,9 +72,10 @@ const router = createRouter({
 
     // Profile
     {
-      path: '/profile/:username',
+      path: '/profile/:nickName',
       name: 'ProfileView',
-      component: ProfileView
+      component: ProfileView,
+      props: true,
     },
     {
       path: '/profile/:username/article',

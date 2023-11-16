@@ -166,7 +166,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 STATICFILES_DIRS = [
@@ -181,8 +181,3 @@ MEDIA_URL = 'media/'
 #     'SCHEMA_PATH_FUNC': 'your_project.views.schema_view',
 #     # 다른 설정들...
 # }
-
-GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
-}
