@@ -7,5 +7,5 @@ urlpatterns = [
     path('user/', views.person), # 회원가입
     path('log/', views.log), # 로그인 로그아웃
     # path('profile/<int:user_pk>/', views.profile), # 유저 개별 프로필 person으로 되나
-    path('<int:user_pk>/follow/', views.follow), # 팔로우 언팔로우
+    path('<int:user_pk>/follow/', views.follow), # 팔로우 언팔로우할 user pk / 본인은 request
 ]
