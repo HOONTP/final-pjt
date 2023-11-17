@@ -14,6 +14,8 @@ urlpatterns = [
 
     path('reviews/', views.review_list),
     path('reviews/<int:review_pk>/', views.review_detail),
+    path('loadmovies/', views.get_movie_datas),
+    path('loadgenres/', views.get_genre_datas),
 
     # path('api/v1/actors/', views.actor_list),
     # path('api/v1/actors/<int:actor_pk>/', views.actor_detail),

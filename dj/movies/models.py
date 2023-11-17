@@ -36,20 +36,16 @@ genre
 class Movie(models.Model):
     # genre_ids = models.CharField(max_length=10)
     id = models.IntegerField(primary_key=True)
-
     genre_ids = models.ManyToManyField("movies.Genre", related_name="genremovie", blank=True, null=True)#통합조회시
     # genres = models.JSONField(blank=True, null=True)# 단일 조회시 안되면 빼자. 어차피 상세는 따로받는게 나을듯
-    
-
     vote_average = models.FloatField(null=True, default=1)
     title = models.CharField(max_length=10)
-    overview = models.TextField()
+    overview = models.TextField(blank=True, null=True)
     release_date = models.DateTimeField(auto_now=False, auto_now_add=False)
-    poster_path = models.TextField()
-
-    # actors = models.ManyToManyField("movies.Actor", related_name="movies")
+    poster_path = models.TextField(blank=True, null=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_movie', blank=True, null=True)
 
+    # actors = models.ManyToManyField("movies.Actor", related_name="movies")
     # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     # image = models.ImageField(blank=True, upload_to=articles_image_path)
     # image = models.ImageField(blank=True, upload_to='%Y/%m/%d/')
