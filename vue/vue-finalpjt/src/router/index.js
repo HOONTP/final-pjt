@@ -16,6 +16,7 @@ import MovieView from '@/views/movie/MovieView.vue'
 import MovieDetailView from '@/views/movie/MovieDetailView.vue'
 
 // Profile
+import ProfileView from '@/views/profile/ProfileView.vue'
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
 import ProfileBookmarkView from '@/views/profile/ProfileBookmarkView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
