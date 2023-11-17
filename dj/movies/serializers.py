@@ -18,7 +18,7 @@ class MovieListSerializer(serializers.ModelSerializer):
         # fields = ('id', 'title', 'overview', 'like_users',)
         fields = '__all__'
         read_only_fields = ('like_users',)
-        exclude = ('genres',)
+        # exclude = ('genres',)
 
     # like_count = serializers.IntegerField(source='liked_users.count', read_only=True) / , 'like_users'
 

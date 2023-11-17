@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+z
 INSTALLED_APPS = [
     'accounts',
     'community',
@@ -166,7 +167,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 
 STATICFILES_DIRS = [
@@ -182,7 +183,5 @@ MEDIA_URL = 'media/'
 #     # 다른 설정들...
 # }
 
-GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
-}
+
+TMDB_API_KEY = config('TMDB_API_KEY')

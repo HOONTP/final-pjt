@@ -16,6 +16,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
+from rest_framework.authtoken.models import Token
 
 
 # @api_view(['POST'])
@@ -28,23 +29,32 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 def person(request, user_pk=-1):
     User = get_user_model()
-    user = get_object_or_404(User, pk=user_pk)
+    print(user_pk)
+    if user_pk != -1:
+        user = get_object_or_404(User, pk=user_pk)
     if request.method == 'GET':
         serializer = UserSerializer(user, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
+        print(request.data)
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            print('b')
             # 비밀번호를 해시로 설정
             user = User.objects.create_user(
                 username=serializer.validated_data['username'],
                 email=serializer.validated_data.get('email', ''),
-                password=serializer.validated_data['password']
+                password=serializer.validated_data['password'],
+                nickname=serializer.validated_data['nickname']
+                
             )
+            print(user)
             user.first_name = serializer.validated_data.get('first_name', '')
             user.last_name = serializer.validated_data.get('last_name', '')
             user.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print(serializer.errors) 
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -63,7 +73,17 @@ def log(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return JsonResponse({'message': 'Login successful'})
+            try:
+                token = Token.objects.get(user=user)
+            except Token.DoesNotExist:
+                token = None
+            
+            return Response({
+                'token': token.key if token else None,
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email,
+            })
         else:
             # 사용자 인증 실패 시 에러 응답
             return JsonResponse({'message': 'Invalid credentials'}, status=400)

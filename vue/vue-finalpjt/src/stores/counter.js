@@ -9,6 +9,7 @@ export const useCounterStore = defineStore('counter', () => {
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
   const profileData = ref()
+  const movies = ref()
   
   const isLogin = computed(() => {
     if (token.value === null) {
@@ -19,17 +20,16 @@ export const useCounterStore = defineStore('counter', () => {
   })
 
   const signUp = function (payload) {
-    const { username, password1, password2 } = payload
+    const { nickname, username, password, password2 } = payload
     axios({
       method: 'post',
       url: `${API_URL}/accounts/user/`,
       data: {
-        username, password1, password2
+        nickname, username, password, password2
       }
     })
       .then((res) => {
         console.log(res)
-        const password = password1
         logIn({ username, password })
       })
       .catch((err) => {
@@ -49,8 +49,8 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) => {
         console.log(res)
-        token.value = res.data.key
-        router.push({ name: 'ArticleView' })
+        token.value = res.data.token
+        router.push({ name: 'CommunityView' })
       })
       .catch((err) => {
         console.log(err)
@@ -104,7 +104,26 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
+
+  const getMovies = function () {
+    axios({
+      method: 'get',
+      url: `${API_URL}/movies/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        console.log(res)
+        movies.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   
   return { API_URL, signUp, logIn, token, isLogin, logOut, profileDetail, profileData, 
-    getArticles, articles, }
+    getArticles, articles, 
+    getMovies, movies,
+  }
 }, { persist: true })

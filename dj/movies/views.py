@@ -5,15 +5,18 @@ from .models import Movie, Review
 from django.contrib.auth import get_user_model as User
 from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
 
-
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
+from django.conf import settings
+import requests
+
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def movie_list(request):
     if request.method == 'GET':
         # movies = Movie.objects.all()
@@ -27,6 +30,7 @@ def movie_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def movie_detail(request, movie_pk):
     # movie = Movie.objects.get(pk=movie_pk)
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -48,6 +52,7 @@ def movie_detail(request, movie_pk):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def review_list(request):
     # Reviews = Review.objects.all()
     reviews = get_list_or_404(Review)
@@ -55,6 +60,7 @@ def review_list(request):
     return Response(serializer.data)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
     # Review = Review.objects.get(pk=Review_pk)
     review = get_object_or_404(Review, pk=review_pk)
@@ -72,6 +78,7 @@ def review_detail(request, review_pk):
             return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def create_review(request, movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
     serializer = ReviewSerializer(data=request.data)
@@ -83,6 +90,7 @@ def create_review(request, movie_pk):
 # 좋아요는 POST 기능,,
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def add_user_to_movie_likes(request, movie_pk, user_pk):
     # POST 요청의 본문에서 영화 ID와 사용자 ID를 가져옴
     # Postman에서 user정보를 어케하지
@@ -120,3 +128,45 @@ def index(request):
 #     actor = get_object_or_404(Actor, pk=actor_pk)
 #     serializer = ActorSerializer(actor)
 #     return Response(serializer.data)
+
+
+api_key = settings.TMDB_API_KEY
+base_url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page='
+url = '2'
+
+def get_movie_details(movie_id):
+    url = f'{base_url}movie/{movie_id}'
+    params = {'api_key': api_key}
+    response = requests.get(url, params=params)
+    data = response.json()
+    return data
+def get_movie_list(api_key, page=1):
+    base_url = 'https://api.themoviedb.org/3/movie/popular'
+    params = {'api_key': api_key, 'page': page}
+
+    response = requests.get(base_url, params=params)
+    data = response.json()
+
+    return data
+
+def get_all_movies(api_key):
+    all_movies = []
+    page = 1
+
+    while True:
+        movie_data = get_movie_list(api_key, page)
+
+        if 'results' in movie_data:
+            all_movies.extend(movie_data['results'])
+
+        # Check if there are more pages
+        if page < movie_data['total_pages']:
+            page += 1
+        else:
+            break
+
+    return all_movies
+
+# Example usage
+api_key = 'your_tmdb_api_key'
+all_movies = get_all_movies(api_key)

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="movie-container">
-      <div v-for="movie in movies.results" :key="movie.id" class="movie-box">
+      <div v-for="movie in store.movies" :key="movie.id" class="movie-box">
         <img
           v-if="movie.poster_path"
           :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
@@ -23,32 +23,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import { useCounterStore } from '@/stores/counter'
+// import axios from 'axios'
 
+const store = useCounterStore()
 const router = useRouter()
-const movies = ref([])
-const apiKey = 'd1f7efa5fffb21e196b176b6a9ac8029'
-const apiUrl = 'https://api.themoviedb.org/3/movie/popular'
 
-axios.get(apiUrl, {
-  params: {
-    api_key: apiKey,
-    language: 'ko-KR',
-  },
-})
-  .then((response) => {
-    // console.log(response.data)
-    movies.value = response.data
-  })
-  .catch((error) => {
-    console.error('Error:', error.message)
-  })
+onMounted(async () => {
+    store.getMovies()
+    console.log(store.movies);
+});
 
-  const goDetail = (movie) => {
-    router.push(`/${movie.id}`)
-  }
+
+const goDetail = (movie) => {
+  router.push(`/${movie.id}`)
+}
 
 </script>
 
