@@ -130,43 +130,43 @@ def index(request):
 #     return Response(serializer.data)
 
 
-api_key = settings.TMDB_API_KEY
-base_url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page='
-url = '2'
+# api_key = settings.TMDB_API_KEY
+# base_url = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page='
+# url = '2'
 
-def get_movie_details(movie_id):
-    url = f'{base_url}movie/{movie_id}'
-    params = {'api_key': api_key}
-    response = requests.get(url, params=params)
-    data = response.json()
-    return data
-def get_movie_list(api_key, page=1):
-    base_url = 'https://api.themoviedb.org/3/movie/popular'
-    params = {'api_key': api_key, 'page': page}
+# def get_movie_details(movie_id):
+#     url = f'{base_url}movie/{movie_id}'
+#     params = {'api_key': api_key}
+#     response = requests.get(url, params=params)
+#     data = response.json()
+#     return data
+# def get_movie_list(api_key, page=1):
+#     base_url = 'https://api.themoviedb.org/3/movie/popular'
+#     params = {'api_key': api_key, 'page': page}
 
-    response = requests.get(base_url, params=params)
-    data = response.json()
+#     response = requests.get(base_url, params=params)
+#     data = response.json()
 
-    return data
+#     return data
 
-def get_all_movies(api_key):
-    all_movies = []
-    page = 1
+# def get_all_movies(api_key):
+#     all_movies = []
+#     page = 1
 
-    while True:
-        movie_data = get_movie_list(api_key, page)
+#     while True:
+#         movie_data = get_movie_list(api_key, page)
 
-        if 'results' in movie_data:
-            all_movies.extend(movie_data['results'])
+#         if 'results' in movie_data:
+#             all_movies.extend(movie_data['results'])
 
-        # Check if there are more pages
-        if page < movie_data['total_pages']:
-            page += 1
-        else:
-            break
+#         # Check if there are more pages
+#         if page < movie_data['total_pages']:
+#             page += 1
+#         else:
+#             break
 
-    return all_movies
+#     return all_movies
 
-# Example usage
-api_key = 'your_tmdb_api_key'
-all_movies = get_all_movies(api_key)
+# # Example usage
+# api_key = 'your_tmdb_api_key'
+# all_movies = get_all_movies(api_key)

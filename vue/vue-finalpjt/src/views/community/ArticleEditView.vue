@@ -19,21 +19,22 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useCounterStore } from '@/stores/counter'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const title = ref('')
 const content = ref('')
 const store = useCounterStore()
+const route = useRoute()
 const router = useRouter()
 
 // 게시글 ID를 라우터 파라미터에서 가져오기
-const articleId = ref(router.params.articleId)
+const articleId = ref(route.params.id)
 
 // 게시글 내용을 가져오는 함수
 const fetchArticle = function () {
   axios({
     method: 'get',
-    url: `${store.API_URL}/api/v1/articles/${articleId.value}/`,
+    url: `${store.API_URL}/community/articles/${articleId.value}/`,
     headers: {
       Authorization: `Token ${store.token}`
     }
@@ -56,7 +57,7 @@ onMounted(() => {
 const updateArticle = function () {
   axios({
     method: 'put',  // 수정은 put 메서드를 사용합니다.
-    url: `${store.API_URL}/api/v1/articles/${articleId.value}/`,
+    url: `${store.API_URL}/community/articles/${articleId.value}/`,
     data: {
       title: title.value,
       content: content.value

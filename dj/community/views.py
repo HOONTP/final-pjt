@@ -24,6 +24,8 @@ def article(request):
     elif request.method == 'POST':
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            print(request.data)
+
             # serializer.save()
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -35,7 +37,8 @@ def article_detail(request, article_pk):
     # movie = Movie.objects.get(pk=movie_pk)
     article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'GET':
-        serializer = ArticleSerializer(article)
+        print(article)
+        serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
         
     elif request.method == 'DELETE':
@@ -51,7 +54,7 @@ def article_detail(request, article_pk):
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
-def comment_detail(request, article_pk, comment_pk):
+def comment_detail(request, article_pk, comment_pk=-1):
     if request.method == 'GET':
         comments = get_list_or_404(Comment, user = request.user)
         return Response(serializer.data)
@@ -60,7 +63,7 @@ def comment_detail(request, article_pk, comment_pk):
     if request.method == 'POST':
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(article=article)
+            serializer.save(article=article, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         comment = get_object_or_404(Comment, pk=comment_pk)

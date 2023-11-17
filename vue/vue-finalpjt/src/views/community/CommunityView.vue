@@ -8,36 +8,44 @@
         class="section-button"
       >
         {{ section.label }}
+
       </div>
     </div>
-
-    <!-- 현재 선택된 section을 표시 -->
+            <!-- 현재 선택된 section을 표시 -->
     <component :is="currentSection.component" />
     <RouterLink :to="{ name: 'ArticleCreateView' }">
       글쓰기
     </RouterLink>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useCounterStore } from '@/stores/counter'
 import CommunityTotalView from '@/views/community/CommunityTotalView.vue'
 import CommunityHotView from '@/views/community/CommunityHotView.vue'
 import CommunityReviewView from '@/views/community/CommunityReviewView.vue'
 import CommunityFreeView from '@/views/community/CommunityFreeView.vue'
 
 const articleSections = [
-  { label: '전체 게시판', routeName: 'CommunityTotalView', component: CommunityTotalView },
-  { label: '인기 게시판', routeName: 'CommunityHotView', component: CommunityHotView },
-  { label: '리뷰 게시판', routeName: 'CommunityReviewView', component: CommunityReviewView },
-  { label: '자유 게시판', routeName: 'CommunityFreeView', component: CommunityFreeView },
+  { id: 0, label: '전체 게시판', routeName: 'CommunityTotalView', component: CommunityTotalView },
+  { id: 1, label: '인기 게시판', routeName: 'CommunityHotView', component: CommunityHotView },
+  { id: 2, label: '리뷰 게시판', routeName: 'CommunityReviewView', component: CommunityReviewView },
+  { id: 3, label: '자유 게시판', routeName: 'CommunityFreeView', component: CommunityFreeView },
 ]
-
+const store = useCounterStore()
 const currentSection = ref(articleSections[0])
+
+onMounted(() => {
+  store.getArticles()
+})
+
 
 const changeSection = (section) => {
   currentSection.value = section
+  store.getArticles()
 }
 </script>
 
