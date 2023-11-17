@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
+z
 INSTALLED_APPS = [
     'accounts',
     'community',
@@ -181,3 +182,6 @@ MEDIA_URL = 'media/'
 #     'SCHEMA_PATH_FUNC': 'your_project.views.schema_view',
 #     # 다른 설정들...
 # }
+
+
+TMDB_API_KEY = config('TMDB_API_KEY')
