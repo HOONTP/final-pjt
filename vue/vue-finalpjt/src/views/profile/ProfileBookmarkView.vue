@@ -1,6 +1,6 @@
 <template>
   <div>
-     <h1>북마크 한 영화 목록</h1>
+     <h3>북마크 한 영화 목록</h3>
   </div>
 </template>
 
