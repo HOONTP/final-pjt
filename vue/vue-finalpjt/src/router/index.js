@@ -6,10 +6,14 @@ import LogInView from '@/views/accounts/LogInView.vue'
 import SignUpView from '@/views/accounts/SignUpView.vue'
 
 // Community
-import ArticleView from '@/views/community/ArticleView.vue'
+import CommunityView from '@/views/community/CommunityView.vue'
+import CommunityFreeView from '@/views/community/CommunityFreeView.vue'
+import CommunityHotView from '@/views/community/CommunityHotView.vue'
+import CommunityReviewView from '@/views/community/CommunityReviewView.vue'
+import CommunityTotalView from '@/views/community/CommunityTotalView.vue'
 import ArticleCreateView from '@/views/community/ArticleCreateView.vue'
 import ArticleDetailView from '@/views/community/ArticleDetailView.vue'
-// import ArticleEditView from '@/views/community/ArticleEditView.vue'
+import ArticleEditView from '@/views/community/ArticleEditView.vue'
 
 // Movie
 import MovieHomeView from '@/views/movies/MovieHomeView.vue'
@@ -40,12 +44,32 @@ const router = createRouter({
 
     // Community
     {
-      path: '/',
-      name: 'ArticleView',
-      component: ArticleView
+      path: '/community',
+      name: 'CommunityView',
+      component: CommunityView
     },
     {
-      path: '/create',
+      path: '/community/free',
+      name: 'CommunityFreeView',
+      component: CommunityFreeView
+    },
+    {
+      path: '/community/hot',
+      name: 'CommunityHotView',
+      component: CommunityHotView
+    },
+    {
+      path: '/community/review',
+      name: 'CommunityReviewView',
+      component: CommunityReviewView
+    },
+    {
+      path: '/community/total',
+      name: 'CommunityTotalView',
+      component: CommunityTotalView
+    },
+    {
+      path: '/articles/create',
       name: 'ArticleCreateView',
       component: ArticleCreateView
     },
@@ -54,11 +78,11 @@ const router = createRouter({
       name: 'ArticleDetailView',
       component: ArticleDetailView
     },
-    // {
-    //   path: '/articles/:id/edit',
-    //   name: 'EditView',
-    //   component: ArticleEditView
-    // },
+    {
+      path: '/articles/:id/edit',
+      name: 'ArticleEditView',
+      component: ArticleEditView
+    },
 
     // Movie
     {
