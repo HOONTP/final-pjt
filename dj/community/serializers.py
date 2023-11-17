@@ -9,16 +9,16 @@ class ArticleListSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        exclude = '__all__'
-        read_only_fields = ('user',)
+        fields = '__all__'
+        read_only_fields = ('user', 'article')
 
 class ArticleSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
+    comments = CommentSerializer(many=True, read_only=True) # 관계모델에서 related값과 동일하게
 
     class Meta:
         model = Article
         fields = '__all__'
-        read_only_fields = ('user', 'like_users', 'board',)
+        read_only_fields = ('user', 'like_users',)
 
 
 class ReplySerializer(serializers.ModelSerializer):

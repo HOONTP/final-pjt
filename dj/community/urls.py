@@ -20,6 +20,4 @@ urlpatterns = [
     path('articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'
     path('articles/<int:article_pk>/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
 
-
-
 ]
