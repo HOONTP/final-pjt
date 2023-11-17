@@ -5,7 +5,7 @@ class Board(models.Model):
     name = models.CharField(max_length=255)
     
 class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들 수 있나?
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, null=True, blank=True)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -21,7 +21,7 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
 class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )

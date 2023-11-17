@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-z
+
 INSTALLED_APPS = [
     'accounts',
     'community',

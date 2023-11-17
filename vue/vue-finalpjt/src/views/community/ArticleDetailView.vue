@@ -13,10 +13,11 @@
     </RouterLink>
 
     <!-- 댓글 목록 표시 -->
-    <div v-if="comments.length > 0">
+    <div v-if="article">
+    <div v-if="article.comments.length > 0">
       <h2>댓글 목록</h2>
       <ul>
-        <li v-for="comment in comments" :key="comment.id">
+        <li v-for="comment in article.comments" :key="comment.id">
           <p>{{ comment.content }}</p>
           <p>작성일 : {{ comment.created_at }}</p>
         </li>
@@ -25,6 +26,8 @@
     <div v-else>
       <p>댓글이 없습니다.</p>
     </div>
+    </div>
+
 
     <!-- 댓글 작성 폼 -->
     <div>
@@ -52,33 +55,34 @@ onMounted(() => {
   // 게시글 데이터 가져오기
   axios({
     method: 'get',
-    url: `${store.API_URL}/api/v1/articles/${route.params.id}/`
+    url: `${store.API_URL}/community/articles/${route.params.id}/`
   })
     .then((res) => {
       article.value = res.data
+      console.log(res)
     })
     .catch((err) => {
       console.log(err)
     })
 
 // 댓글 목록 가져오기
-  axios({
-    method: 'get',
-    url: `${store.API_URL}/api/v1/comments/?article=${route.params.id}`
-  })
-    .then((res) => {
-      comments.value = res.data
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+  // axios({
+  //   method: 'get',
+  //   url: `${store.API_URL}/api/v1/comments/?article=${route.params.id}`
+  // })
+  //   .then((res) => {
+  //     comments.value = res.data
+  //   })
+  //   .catch((err) => {
+  //     console.log(err)
+  //   })
 })
 
 const createComment = () => {
   // 새로운 댓글 작성
   axios({
     method: 'post',
-    url: `${store.API_URL}/api/v1/comments/`,
+    url: `${store.API_URL}/community/articles/${route.params.id}/comments/`,
     data: {
       content: newComment.value,
       article: route.params.id
@@ -91,10 +95,11 @@ const createComment = () => {
       // 작성이 성공하면 댓글 목록을 다시 불러와 갱신
       axios({
         method: 'get',
-        url: `${store.API_URL}/api/v1/comments/?article=${route.params.id}`
+        url: `${store.API_URL}/community/articles/${route.params.id}/`
       })
         .then((res) => {
-          comments.value = res.data
+          article.value = res.data
+          console.log(res)
         })
         .catch((err) => {
           console.log(err)
