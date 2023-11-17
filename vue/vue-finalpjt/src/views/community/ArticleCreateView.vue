@@ -10,7 +10,7 @@
         <label for="content">내용:</label>
         <textarea v-model.trim="content" id="content"></textarea>
       </div>
-      <input type="submit">
+      <input type="submit" value="작성하기">
     </form>
   </div>
 </template>
@@ -39,18 +39,15 @@ const createArticle = function () {
     }
   })
     .then((res) => {
-      // console.log(res)
-      router.push({ name: 'ArticleView' })
+      router.push({ name: 'CommunityView' })
     })
     .catch((err) => {
       console.log(err)
     })
 }
 
-
-
 </script>
 
-<style>
+<style scoped>
 
 </style>
