@@ -11,12 +11,12 @@
 
       </div>
     </div>
-            <!-- 현재 선택된 section을 표시 -->
+    
+    <!-- 현재 선택된 section을 표시 -->
     <component :is="currentSection.component" />
     <RouterLink :to="{ name: 'ArticleCreateView' }">
       글쓰기
     </RouterLink>
-
   </div>
 </template>
 

@@ -18,6 +18,8 @@ urlpatterns = [
     path('articles/<int:article_pk>/', views.article_detail), # 게시글 상세 조회
     path('comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기
     path('articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'
-    path('articles/<int:article_pk>/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
-
+    path('comments/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
+    path('articles/<int:article_id>/like/', views.like_post),
+    path('comments/<int:comment_id>/like/', views.like_comment),
+    path('replies/<int:reply_id>/like/', views.like_reply),
 ]

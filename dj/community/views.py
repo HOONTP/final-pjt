@@ -54,13 +54,13 @@ def article_detail(request, article_pk):
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
-def comment_detail(request, article_pk, comment_pk=-1):
+def comment_detail(request, article_pk=-1, comment_pk=-1):
     if request.method == 'GET':
         comments = get_list_or_404(Comment, user = request.user)
         return Response(serializer.data)
-    article = get_object_or_404(Article, pk=article_pk)
 
     if request.method == 'POST':
+        article = get_object_or_404(Article, pk=article_pk)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(article=article, user=request.user)
