@@ -1,1 +1,1 @@
-[]
+[{"model": "movies.movie", "pk": 1, "fields": {"vote_average": 1.0, "title": "111", "overview": "2222", "release_date": "2023-11-17T05:34:15Z", "poster_path": "4124", "genre_ids": [18], "like_users": [1, 2]}}, {"model": "movies.genre", "pk": 18, "fields": {"name": "액션"}}, {"model": "movies.review", "pk": 1, "fields": {"movie": 1, "user": 1, "content": "zzzgd", "like_users": [2]}}]
