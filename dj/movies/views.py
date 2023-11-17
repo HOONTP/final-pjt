@@ -154,7 +154,7 @@ def get_movie_datas(request):
                     movie_instance = Movie.objects.create(**fields)
                     movie_instance.genre_ids.set(genre_ids)
                     # print(movie_instance)
-                except IntegrityError:
+                except IntegrityError: # 여기서 이거 지우고 에러가 뭔지 볼걸. 그걸 생각 못했네
                     try:
                         movie_instance = Movie.objects.get(id=fields['id'])
                         movie_instance.title = fields['title']
