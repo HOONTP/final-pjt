@@ -130,6 +130,7 @@ def index(request):
 def get_movie_datas(request):
     # 1페이지부터 500페이지까지 (페이지당 20개, 총 10,000개)
     Movie.objects.all().delete()
+    count = 0
 
     for i in range(1, 501):
         request_url = f"https://api.themoviedb.org/3/movie/popular?api_key={TMDB_API_KEY}&language=ko-KR&page={i}"
@@ -147,7 +148,7 @@ def get_movie_datas(request):
                     'id': movie['id'],
                     'title': movie['title'],
                     'release_date': make_aware(datetime.strptime(release_date_str, '%Y-%m-%d')) if release_date_str else None,
-                    # 'popularity': movie['popularity'],
+                    'popularity': movie['popularity'],
                     'vote_average': movie['vote_average'],
                     'overview': movie['overview'],
                     'poster_path': movie['poster_path'],
@@ -157,7 +158,9 @@ def get_movie_datas(request):
                     movie_instance.genre_ids.set(genre_ids)
                 except Exception as e:
                     # print(fields)
-                    print(e)
+                    count += 1
+                    print(e, movie['id'])
+    print(count)
     return JsonResponse({'message': 'movie load'})
 
 def get_genre_datas(request):

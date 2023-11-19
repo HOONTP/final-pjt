@@ -40,7 +40,7 @@ class Movie(models.Model):
     actor_ids = models.ManyToManyField("movies.Actor", related_name="actormovie")
     director = models.ForeignKey("movies.Director", on_delete=models.CASCADE, related_name="directormovie", blank=True, null=True)
     runtime = models.IntegerField(blank=True, null=True)
-    vote_average = models.FloatField(default=1, blank=True, null=True)
+    vote_average = models.FloatField(default=0, blank=True, null=True)
     title = models.CharField(max_length=10)
     overview = models.TextField(blank=True, null=True)
     popularity = models.IntegerField(blank=True, null=True)
@@ -73,8 +73,8 @@ class Review(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=1)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_Reviews')
     content = models.CharField(max_length=200)
-    # created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
-    # updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
+    created_at = models.DateTimeField(auto_now=False, auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 
 # class Actor(models.Model):
