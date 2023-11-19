@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from .models import Movie, Review, Genre
+from .models import Movie, Review, Genre, Actor, Director
 from django.contrib.auth import get_user_model as User
 from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
 from django.http import JsonResponse
@@ -129,6 +129,8 @@ def index(request):
 
 def get_movie_datas(request):
     # 1페이지부터 500페이지까지 (페이지당 20개, 총 10,000개)
+    Movie.objects.all().delete()
+
     for i in range(1, 501):
         request_url = f"https://api.themoviedb.org/3/movie/popular?api_key={TMDB_API_KEY}&language=ko-KR&page={i}"
         movies = requests.get(request_url).json()
@@ -153,23 +155,9 @@ def get_movie_datas(request):
                 try:
                     movie_instance = Movie.objects.create(**fields)
                     movie_instance.genre_ids.set(genre_ids)
-                    # print(movie_instance)
-                except IntegrityError: # 여기서 이거 지우고 에러가 뭔지 볼걸. 그걸 생각 못했네
-                    try:
-                        movie_instance = Movie.objects.get(id=fields['id'])
-                        movie_instance.title = fields['title']
-                        movie_instance.released_date = fields['release_date']
-                        movie_instance.vote_avg = fields['vote_average']
-                        movie_instance.overview = fields['overview']
-                        movie_instance.poster_path = fields['poster_path']
-                        # movie_instance.genres_ids = genre_ids
-                        movie_instance.genre_ids.set(genre_ids)
-                        movie_instance.save()
-                    except Movie.DoesNotExist:
-                        print(f"Movie with ID {fields['id']} does not exist.")
-                except:
-                    print('1')
-                    pass
+                except Exception as e:
+                    # print(fields)
+                    print(e)
     return JsonResponse({'message': 'movie load'})
 
 def get_genre_datas(request):
@@ -197,6 +185,38 @@ def get_genre_datas(request):
     else:
         return JsonResponse({'error': 'Failed to fetch genres from TMDB API'}, status=500)
 
+def get_movie_detail(request):
+    movies = get_list_or_404(Movie)
+    for mov in movies:
+        print(mov.id)
+        language = 'ko-KR'
+        api_url = f'https://api.themoviedb.org/3/movie/{mov.id}'
+        movie = requests.get(api_url, params={'api_key': TMDB_API_KEY, 'language': language, 'append_to_response': 'credits'}).json()
+        # print(movie)
+        # mov = get_object_or_404(Movie, pk=mov.id)
+        mov.runtime = movie['runtime']
+        actors_id = []
+        for i in range(len(movie['credits']['cast'])):
+            actors_id.append(movie['credits']['cast'][i]['id'])
+            actor, created = Actor.objects.get_or_create(
+                id=movie['credits']['cast'][i]['id'],
+                defaults={'name': movie['credits']['cast'][i]['name']}
+            )
+            if i == 10:
+                break
+        mov.actor_ids.set(actors_id)
+        
+        for i in range(len(movie['credits']['crew'])):
+            if movie['credits']['crew'][i]['known_for_department'] == "Directing":
+                director, created = Director.objects.get_or_create(
+                id=movie['credits']['crew'][i]['id'],
+                defaults={'name': movie['credits']['crew'][i]['name']}
+                )
+                direct = get_object_or_404(Director, pk=movie['credits']['crew'][i]['id'])
+                mov.director = direct
+                break
+        mov.save()
+    return JsonResponse({'message': 'people load'})
 
 
 

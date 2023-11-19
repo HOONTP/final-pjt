@@ -14,7 +14,7 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='like_articles', blank=True, null=True
+        settings.AUTH_USER_MODEL, related_name='like_articles'
     )
     def save(self, *args, **kwargs):
         # 이전 데이터를 가져옵니다.
@@ -40,7 +40,7 @@ class Comment(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='like_comments', blank=True, null=True
+        settings.AUTH_USER_MODEL, related_name='like_comments'
     )
 
 
@@ -49,4 +49,4 @@ class Reply(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_replies', blank=True, null=True)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_replies')

@@ -14,7 +14,7 @@ urlpatterns = [
     # path('<int:review_pk>/like/', views.like, name='like'),
 
     
-    path('articles/', views.article), # 모든 게시글 조회 및 입력
+    path('<int:community_pk>/articles/<int:user_pk>/', views.article), # 모든 게시글 조회 및 입력
     path('articles/<int:article_pk>/', views.article_detail), # 게시글 상세 조회
     path('comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기
     path('articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'

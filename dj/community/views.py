@@ -15,12 +15,17 @@ from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerial
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def article(request):
+def article(request, community_pk, user_pk=-1):
     if request.method == 'GET':
-        # movies = Movie.objects.all()
-        articles = get_list_or_404(Article)
-        serializer = ArticleListSerializer(articles, many=True, partial=True)
-        return Response(serializer.data)
+        if user_pk == -1:
+            # movies = Movie.objects.all()
+            articles = get_list_or_404(Article, board=community_pk)
+            serializer = ArticleListSerializer(articles, many=True, partial=True)
+            return Response(serializer.data)
+        else:
+            articles = get_list_or_404(Article, pk = user_pk)
+            serializer = ArticleListSerializer(articles, many=True, partial=True)
+            return Response(serializer.data)
     elif request.method == 'POST':
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -82,7 +87,12 @@ def comment_detail(request, article_pk, comment_pk=-1):
 @permission_classes([IsAuthenticated])
 def like_post(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    article.like_users.add(request.user)
+    # 현재 사용자가 이미 좋아요를 했다면 제거, 그렇지 않다면 추가
+    if request.user in article.like_users.all():
+        article.like_users.remove(request.user)
+    else:
+        article.like_users.add(request.user)
+
     article.save()
     serializer = ArticleSerializer(article)
     return Response(serializer.data)
@@ -91,7 +101,10 @@ def like_post(request, article_id):
 @permission_classes([IsAuthenticated])
 def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    comment.like_users.add(request.user)
+    if request.user in comment.like_users.all():
+        comment.like_users.remove(request.user)
+    else:
+        comment.like_users.add(request.user)
     comment.save()
     serializer = CommentSerializer(comment)
     return Response(serializer.data)
@@ -101,7 +114,10 @@ def like_comment(request, comment_id):
 @permission_classes([IsAuthenticated])
 def like_reply(request, reply_id):
     reply = get_object_or_404(Reply, id=reply_id)
-    reply.like_users.add(request.user)
+    if request.user in reply.like_users.all():
+        reply.like_users.remove(request.user)
+    else:
+        reply.like_users.add(request.user)
     reply.save()
     serializer = ReplySerializer(reply)
     return Response(serializer.data)
