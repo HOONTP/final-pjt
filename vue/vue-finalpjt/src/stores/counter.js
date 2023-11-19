@@ -5,11 +5,14 @@ import axios from 'axios'
 
 export const useCounterStore = defineStore('counter', () => {
   const router = useRouter()
+  const LikedArticles = ref([])
   const articles = ref([])
+  const article = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
   const profileData = ref()
   const movies = ref()
+  
   
   const isLogin = computed(() => {
     if (token.value === null) {
@@ -87,11 +90,28 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
   
-  // DRF에 article 조회 요청을 보내는 action
-  const getArticles = function () {
+  const getLikedArticles = function (user_pk) {
     axios({
       method: 'get',
-      url: `${API_URL}/community/articles/`,
+      url: `${API_URL}/community/${community_pk}/articles/${user_pk}`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        // console.log(res)
+        LikedArticles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  // DRF에 article 조회 요청을 보내는 action
+  const getArticles = function (community_pk, user_pk) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/${community_pk}/articles/${user_pk}/`,
       headers: {
         Authorization: `Token ${token.value}`
       }
@@ -99,6 +119,23 @@ export const useCounterStore = defineStore('counter', () => {
       .then((res) =>{
         // console.log(res)
         articles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  const getArticle = function (id) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/articles/${id}/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) => {
+        LikedArticles.value = res.data
+        console.log(res)
       })
       .catch((err) => {
         console.log(err)
@@ -123,7 +160,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
   
   return { API_URL, signUp, logIn, token, isLogin, logOut, profileDetail, profileData, 
-    getArticles, articles, 
+    getArticles, articles, getArticle, article, getLikedArticles, LikedArticles,
     getMovies, movies,
   }
 }, { persist: true })

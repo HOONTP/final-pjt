@@ -35,10 +35,10 @@ const community_id = ref(null)
 const store = useCounterStore()
 const router = useRouter()
 
-const createArticle = function () {
+const createArticle = function (user_pk=-1) {
   axios({
     method: 'post',
-    url: `${store.API_URL}/community/articles/`,
+    url: `${store.API_URL}/community/${community_id}/articles/${user_pk}/`,
     data: {
       title: title.value,
       content: content.value,

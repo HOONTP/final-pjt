@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 댓글 list 컴포넌트 -->
-    <CommentList :article="article" @load-article="loadArticle"/>
+    <CommentList />
 
     <!-- 댓글 작성 폼 -->
     <div>
@@ -22,17 +22,10 @@ import CommentList from '@/components/community/CommentList.vue'
 const store = useCounterStore()
 const route = useRoute()
 const newComment = ref('')  // 새로 작성할 댓글을 담을 변수
-const article = ref(null)  // article 초기화
-
-defineProps({
-  article: Object
-})
 
 onMounted(() => {
-  // 게시글 초기화
-  if (article.value === null) {
-    loadArticle()
-  }
+  // 게시글 데이터 가져오기
+  store.getArticle(route.params.id)
 })
 
 const createComment = () => {
@@ -51,27 +44,10 @@ const createComment = () => {
     .then(() => {
       // 댓글 작성 후에는 입력 필드 초기화
       newComment.value = ''
-      loadArticle()
+      store.getArticle(route.params.id)
     })
     .catch((err) => {
       console.log('댓글 생성 에러:', err)
-    })
-}
-
-const loadArticle = () => {
-  // 게시글 갱신
-  axios({
-    method: 'get',
-    url: `${store.API_URL}/community/articles/${route.params.id}/`,
-    headers: {
-      Authorization: `Token ${store.token}`,
-    },
-  })
-    .then((res) => {
-      article.value = res.data
-    })
-    .catch((err) => {
-      console.error('게시글 불러오기 에러:', err)
     })
 }
 </script>
