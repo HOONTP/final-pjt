@@ -31,10 +31,10 @@
             {{ comment.like_users ? comment.like_users.length : 0 }}
           </button>
           <br>
-
+          
           <!----------------------------- 답글 목록 시작 ----------------------------->
           <ul>
-            <li v-for="reply in comment.reply" :key="reply.id">
+            <li v-for="reply in comment.replies" :key="reply.id">
               <div>(답글)</div>
               <div>
                 <p>작성자 : {{ reply.user_nickname }}</p>
@@ -169,7 +169,7 @@ const toggleReplyForm = (commentId) => {
   // 댓글 별로 답글 폼 토글
   activeReplyForm.value = activeReplyForm.value === commentId ? null : commentId
 
-  // 답글 폼을 토글할 때마다 초기화
+  // 답글 폼을 토글할 때마다 내용 초기화
   if (!activeReplyForm.value) {
     newReply.value = ''
   }

@@ -60,7 +60,7 @@ def article_detail(request, article_pk):
 @permission_classes([IsAuthenticated])
 def comment_detail(request, article_pk, comment_pk=0):
     if request.method == 'GET':
-        comments = get_list_or_404(Comment, user = request.user)
+        comments = get_list_or_404(Comment, user=request.user)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     article = get_object_or_404(Article, pk=article_pk)
@@ -86,7 +86,7 @@ def comment_detail(request, article_pk, comment_pk=0):
 @permission_classes([IsAuthenticated])
 def reply_detail(request, comment_pk, reply_pk=0):
     if request.method == 'GET':
-        replys = get_list_or_404(Reply, user = request.user)
+        replys = get_list_or_404(Reply, user=request.user)
         serializer = ReplySerializer(replys, many=True)
         return Response(serializer.data)
     comment = get_object_or_404(Comment, pk=comment_pk)

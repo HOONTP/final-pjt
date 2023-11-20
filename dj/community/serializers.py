@@ -25,7 +25,8 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class ReplySerializer(serializers.ModelSerializer):
+    user_nickname = serializers.CharField(source='user.nickname', read_only=True)
     class Meta:
         model = Reply
         fields = '__all__'
-        read_only_fields = ('user',)
+        read_only_fields = ('user', 'comment', 'like_users',)
