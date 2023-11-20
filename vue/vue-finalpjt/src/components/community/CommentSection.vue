@@ -7,7 +7,7 @@
     <div>
       <label for="comment">댓글 작성:</label>
       <textarea v-model.trim="newComment" id="comment"></textarea>
-      <button @click="createComment">댓글 작성</button>
+      <button @click="createComment">등록</button>
     </div>
   </div>
 </template>
