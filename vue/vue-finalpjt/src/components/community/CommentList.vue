@@ -4,12 +4,17 @@
       <h2>댓글 목록</h2>
       <ul>
         <li v-for="comment in store.article.comments" :key="comment.id">
+          
           <p>{{ comment.content }}</p>
           <p>작성일 : {{ comment.created_at }}</p>
+
+          <!-- 내가 작성한 댓글만 수정/삭제 버튼 존재 -->
+          <div v-if="store.currentUser.user_id === comment.user">
             <!-- 수정 버튼 -->
             <button @click="editComment(comment.id)">수정</button>
             <!-- 삭제 버튼 -->
             <button @click="deleteComment(comment.id)">삭제</button>
+          </div>
         </li>
       </ul>
     </div>
