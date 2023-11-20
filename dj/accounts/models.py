@@ -11,4 +11,3 @@ class CustomUser(AbstractUser):
         # 사용자 저장 시 토큰 생성
         super().save(*args, **kwargs)
         Token.objects.get_or_create(user=self)
-

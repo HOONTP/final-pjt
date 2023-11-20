@@ -8,7 +8,7 @@ from django.http import JsonResponse
 
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
@@ -24,11 +24,16 @@ from datetime import datetime
 TMDB_API_KEY = config('TMDB_API_KEY')
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def movie_list(request):
+@authentication_classes([])
+def movie_list(request, user_pk=0):
     if request.method == 'GET':
-        movies = get_list_or_404(Movie)
-        serializer = MovieListSerializer(movies, many=True, partial=True)
+        if user_pk == 0:
+            movies = get_list_or_404(Movie)
+            page = int(request.headers.get('page')) # headers의 정보 받는 방법
+            serializer = MovieListSerializer(movies[9*(page-1):9*page], many=True, partial=True)
+        else:
+            movies = User.like_movies.all()
+            serializer = MovieListSerializer(movies, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = MovieSerializer(data=request.data)
@@ -37,7 +42,7 @@ def movie_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
 
@@ -59,8 +64,8 @@ def movie_detail(request, movie_pk):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def review_list(request):
-    reviews = get_list_or_404(Review)
+def review_list(request, user_pk):
+    reviews = get_list_or_404(Review, pk=user_pk)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 

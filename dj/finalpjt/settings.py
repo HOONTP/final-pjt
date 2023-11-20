@@ -51,11 +51,8 @@ INSTALLED_APPS = [
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'dj_rest_auth.registration',
-
-
     'corsheaders',
     'drf_spectacular',
-
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,6 +93,11 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
 ]
+CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 이후 잠깐 된듯.
+    'authorization',
+    'page',
+]
+
 ROOT_URLCONF = 'finalpjt.urls'
 
 TEMPLATES = [
@@ -162,7 +164,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -171,6 +172,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
+STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
 	BASE_DIR / 'static',
