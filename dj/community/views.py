@@ -23,7 +23,7 @@ def article(request, community_pk, user_pk=-1):
             serializer = ArticleListSerializer(articles, many=True, partial=True)
             return Response(serializer.data)
         else:
-            articles = get_list_or_404(Article, pk = user_pk)
+            articles = get_list_or_404(Article, user = user_pk)
             serializer = ArticleListSerializer(articles, many=True, partial=True)
             return Response(serializer.data)
     elif request.method == 'POST':
@@ -85,7 +85,7 @@ def comment_detail(request, article_pk, comment_pk=-1):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def like_post(request, article_id):
+def like_article(request, article_id):
     article = get_object_or_404(Article, id=article_id)
     # 현재 사용자가 이미 좋아요를 했다면 제거, 그렇지 않다면 추가
     if request.user in article.like_users.all():

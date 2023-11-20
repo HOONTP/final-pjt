@@ -27,7 +27,6 @@ TMDB_API_KEY = config('TMDB_API_KEY')
 @permission_classes([IsAuthenticated])
 def movie_list(request):
     if request.method == 'GET':
-        # movies = Movie.objects.all()
         movies = get_list_or_404(Movie)
         serializer = MovieListSerializer(movies, many=True, partial=True)
         return Response(serializer.data)
@@ -40,7 +39,6 @@ def movie_list(request):
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def movie_detail(request, movie_pk):
-    # movie = Movie.objects.get(pk=movie_pk)
     movie = get_object_or_404(Movie, pk=movie_pk)
 
     if request.method == 'GET':
@@ -62,7 +60,6 @@ def movie_detail(request, movie_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def review_list(request):
-    # Reviews = Review.objects.all()
     reviews = get_list_or_404(Review)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
@@ -70,7 +67,6 @@ def review_list(request):
 @api_view(['GET', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
-    # Review = Review.objects.get(pk=Review_pk)
     review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'GET':
         serializer = ReviewSerializer(review)
@@ -140,7 +136,7 @@ def get_movie_datas(request):
             if movie['poster_path'] == 'null':
                 movie['poster_path'] = 0
             if movie.get('release_date', ''):
-                genre_ids = movie.get('genre_ids', [])
+                genre_ids = movie.get('genre_ids', [])#[]
                 # movie_instance.genre_ids.set(genre_ids)
                 release_date_str = movie.get('release_date', '')
 
@@ -152,6 +148,7 @@ def get_movie_datas(request):
                     'vote_average': movie['vote_average'],
                     'overview': movie['overview'],
                     'poster_path': movie['poster_path'],
+                    'original_title': movie['original_title'],
                 }
                 try:
                     movie_instance = Movie.objects.create(**fields)
@@ -190,6 +187,7 @@ def get_genre_datas(request):
 
 def get_movie_detail(request):
     movies = get_list_or_404(Movie)
+    count = 0
     for mov in movies:
         print(mov.id)
         language = 'ko-KR'
@@ -197,28 +195,33 @@ def get_movie_detail(request):
         movie = requests.get(api_url, params={'api_key': TMDB_API_KEY, 'language': language, 'append_to_response': 'credits'}).json()
         # print(movie)
         # mov = get_object_or_404(Movie, pk=mov.id)
-        mov.runtime = movie['runtime']
-        actors_id = []
-        for i in range(len(movie['credits']['cast'])):
-            actors_id.append(movie['credits']['cast'][i]['id'])
-            actor, created = Actor.objects.get_or_create(
-                id=movie['credits']['cast'][i]['id'],
-                defaults={'name': movie['credits']['cast'][i]['name']}
-            )
-            if i == 10:
-                break
-        mov.actor_ids.set(actors_id)
-        
-        for i in range(len(movie['credits']['crew'])):
-            if movie['credits']['crew'][i]['known_for_department'] == "Directing":
-                director, created = Director.objects.get_or_create(
-                id=movie['credits']['crew'][i]['id'],
-                defaults={'name': movie['credits']['crew'][i]['name']}
+        try:
+            mov.runtime = movie['runtime']
+            actors_id = []
+            for i in range(len(movie['credits']['cast'])):
+                actors_id.append(movie['credits']['cast'][i]['id'])
+                actor, created = Actor.objects.get_or_create(
+                    id=movie['credits']['cast'][i]['id'],
+                    defaults={'name': movie['credits']['cast'][i]['name']}
                 )
-                direct = get_object_or_404(Director, pk=movie['credits']['crew'][i]['id'])
-                mov.director = direct
-                break
-        mov.save()
+                if i == 10:
+                    break
+            mov.actor_ids.set(actors_id)
+            
+            for i in range(len(movie['credits']['crew'])):
+                if movie['credits']['crew'][i]['known_for_department'] == "Directing":
+                    director, created = Director.objects.get_or_create(
+                    id=movie['credits']['crew'][i]['id'],
+                    defaults={'name': movie['credits']['crew'][i]['name']}
+                    )
+                    direct = get_object_or_404(Director, pk=movie['credits']['crew'][i]['id'])
+                    mov.director = direct
+                    break
+            mov.save()
+        except Exception as e:
+            print(e)
+            count += 1
+    print(count)
     return JsonResponse({'message': 'people load'})
 
 
