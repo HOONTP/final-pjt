@@ -7,6 +7,11 @@ from django.contrib.auth import get_user_model
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)  # 패스워드는 쓰기 전용으로 설정
     password2 = serializers.CharField(write_only=True)
+    like_articles = serializers.CharField(read_only=True)
+    like_comments = serializers.CharField(read_only=True)
+    like_replies = serializers.CharField(read_only=True)
+    like_movies =serializers.CharField(read_only=True)
+    like_Reviews =serializers.CharField(read_only=True)
 
     class Meta:
         model = get_user_model()
