@@ -16,8 +16,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { ref, onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -56,7 +56,7 @@ onMounted(() => {
 
 const updateArticle = function () {
   axios({
-    method: 'put',  // 수정은 put 메서드를 사용합니다.
+    method: 'put',
     url: `${store.API_URL}/community/articles/${articleId.value}/`,
     data: {
       title: title.value,
@@ -66,8 +66,8 @@ const updateArticle = function () {
       Authorization: `Token ${store.token}`
     }
   })
-    .then((res) => {
-      router.push({ name: 'CommunityView' })
+    .then(() => {
+      router.push({ name: 'ArticleDetailView' })
     })
     .catch((err) => {
       console.log(err)

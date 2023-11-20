@@ -8,31 +8,29 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-from .models import Article, Comment, Reply
+from .models import Article, Comment, Reply, Board
 from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, ReplySerializer
 # from .forms import ReviewForm, CommentForm
 
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def article(request, community_pk, user_pk=-1):
+def article(request, community_pk=0, user_pk=0):
     if request.method == 'GET':
-        if user_pk == -1:
+        if user_pk == 0:
             # movies = Movie.objects.all()
             articles = get_list_or_404(Article, board=community_pk)
-            serializer = ArticleListSerializer(articles, many=True, partial=True)
-            return Response(serializer.data)
         else:
-            articles = get_list_or_404(Article, user = user_pk)
-            serializer = ArticleListSerializer(articles, many=True, partial=True)
-            return Response(serializer.data)
+            articles = get_list_or_404(Article, user=user_pk)
+        serializer = ArticleListSerializer(articles, many=True, partial=True)
+        return Response(serializer.data)
     elif request.method == 'POST':
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             print(request.data)
-
+            board = get_object_or_404(Board, pk=community_pk)
             # serializer.save()
-            serializer.save(user=request.user)
+            serializer.save(user=request.user, board=board)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -57,11 +55,13 @@ def article_detail(request, article_pk):
             serializer.save()
             return Response(serializer.data)
 
+
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
-def comment_detail(request, article_pk, comment_pk=-1):
+def comment_detail(request, article_pk, comment_pk=0):
     if request.method == 'GET':
         comments = get_list_or_404(Comment, user = request.user)
+        serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     article = get_object_or_404(Article, pk=article_pk)
 
@@ -85,8 +85,8 @@ def comment_detail(request, article_pk, comment_pk=-1):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def like_article(request, article_id):
-    article = get_object_or_404(Article, id=article_id)
+def like_article(request, article_pk):
+    article = get_object_or_404(Article, id=article_pk)
     # 현재 사용자가 이미 좋아요를 했다면 제거, 그렇지 않다면 추가
     if request.user in article.like_users.all():
         article.like_users.remove(request.user)
@@ -99,8 +99,8 @@ def like_article(request, article_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def like_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
+def like_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, id=comment_pk)
     if request.user in comment.like_users.all():
         comment.like_users.remove(request.user)
     else:
@@ -112,8 +112,9 @@ def like_comment(request, comment_id):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def like_reply(request, reply_id):
-    reply = get_object_or_404(Reply, id=reply_id)
+def like_reply(request, reply_pk):
+    reply = get_object_or_404(Reply, id=reply_pk)
+
     if request.user in reply.like_users.all():
         reply.like_users.remove(request.user)
     else:

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 class Board(models.Model):
     name = models.CharField(max_length=255)
@@ -27,8 +28,7 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
 
         # title이나 content가 변경되었을 때만 updated_at을 업데이트합니다.
         if self.title != old_data.title or self.content != old_data.content:
-            self.updated_at = Article.now()
-
+            self.updated_at = timezone.now()
         super(Article, self).save(*args, **kwargs)
 
 
