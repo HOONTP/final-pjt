@@ -16,18 +16,22 @@
     </button>
     <br>
 
-    <RouterLink
-      v-if="store.article"
-      :to="{
-        name: 'ArticleEditView',
-        params: { id: store.article.id },
-      }">
-      [글 수정]
-    </RouterLink>
+    <!-- 내가 작성한 게시글만 수정/삭제 버튼 존재 -->
+    <div v-if="store.currentUser.user_id === store.article.user">
+      <!-- 수정 버튼 -->
+      <RouterLink
+        v-if="store.article"
+        :to="{
+          name: 'ArticleEditView',
+          params: { id: store.article.id },
+        }">
+        [글 수정]
+      </RouterLink>
 
-    <!-- 삭제 버튼 -->
-    <button @click="deleteArticle" v-if="store.article">[글 삭제]</button>
-
+      <!-- 삭제 버튼 -->
+      <button @click="deleteArticle" v-if="store.article">[글 삭제]</button>
+    </div>
+    
     <!-- 댓글 section 컴포넌트 -->
     <CommentSection />
   </div>
