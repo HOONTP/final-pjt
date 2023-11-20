@@ -2,11 +2,14 @@ from rest_framework import serializers
 from .models import Article, Comment, Reply
 
 class ArticleListSerializer(serializers.ModelSerializer):
+    user_nickname = serializers.CharField(source='user.nickname', read_only=True)
+
     class Meta:
         model = Article
         fields = '__all__'
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_nickname = serializers.CharField(source='user.nickname', read_only=True)
     class Meta:
         model = Comment
         fields = '__all__'
