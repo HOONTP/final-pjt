@@ -10,7 +10,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ('user', 'article')
+        read_only_fields = ('user', 'article', 'like_users',)
 
 class ArticleSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True) # 관계모델에서 related값과 동일하게

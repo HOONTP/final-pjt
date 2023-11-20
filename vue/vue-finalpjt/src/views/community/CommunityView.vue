@@ -11,12 +11,12 @@
 
       </div>
     </div>
-            <!-- 현재 선택된 section을 표시 -->
+    
+    <!-- 현재 선택된 section을 표시 -->
     <component :is="currentSection.component" />
     <RouterLink :to="{ name: 'ArticleCreateView' }">
       글쓰기
     </RouterLink>
-
   </div>
 </template>
 
@@ -30,22 +30,21 @@ import CommunityReviewView from '@/views/community/CommunityReviewView.vue'
 import CommunityFreeView from '@/views/community/CommunityFreeView.vue'
 
 const articleSections = [
-  { id: 0, label: '전체 게시판', routeName: 'CommunityTotalView', component: CommunityTotalView },
-  { id: 1, label: '인기 게시판', routeName: 'CommunityHotView', component: CommunityHotView },
-  { id: 2, label: '리뷰 게시판', routeName: 'CommunityReviewView', component: CommunityReviewView },
-  { id: 3, label: '자유 게시판', routeName: 'CommunityFreeView', component: CommunityFreeView },
+  { id: 1, label: '전체 게시판', routeName: 'CommunityTotalView', component: CommunityTotalView },
+  { id: 2, label: '인기 게시판', routeName: 'CommunityHotView', component: CommunityHotView },
+  { id: 3, label: '리뷰 게시판', routeName: 'CommunityReviewView', component: CommunityReviewView },
+  { id: 4, label: '자유 게시판', routeName: 'CommunityFreeView', component: CommunityFreeView },
 ]
 const store = useCounterStore()
 const currentSection = ref(articleSections[0])
 
 onMounted(() => {
-  store.getArticles()
+  store.getArticles(1)
 })
-
 
 const changeSection = (section) => {
   currentSection.value = section
-  store.getArticles()
+  store.getArticles(section.id)
 }
 </script>
 

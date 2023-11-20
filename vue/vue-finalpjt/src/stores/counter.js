@@ -4,14 +4,14 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 export const useCounterStore = defineStore('counter', () => {
-  const router = useRouter()
-  const articles = ref([])
   const API_URL = 'http://127.0.0.1:8000'
+  const router = useRouter()
+
+  // Accounts
   const token = ref(null)
-  const profileData = ref()
-  const movies = ref()
-  
+  const currentUser = ref(0)
   const isLogin = computed(() => {
+    // 로그인 여부 확인
     if (token.value === null) {
       return false
     } else {
@@ -19,6 +19,19 @@ export const useCounterStore = defineStore('counter', () => {
     }
   })
 
+  // Community
+  const articles = ref([])
+  const article = ref([])
+  const LikedArticles = ref([])
+  
+  // Movie
+  const movies = ref([])
+
+  // Profile
+  const profile = ref([])
+  
+  
+  // 회원가입
   const signUp = function (payload) {
     const { nickname, username, password, password2 } = payload
     axios({
@@ -28,8 +41,7 @@ export const useCounterStore = defineStore('counter', () => {
         nickname, username, password, password2
       }
     })
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         logIn({ username, password })
       })
       .catch((err) => {
@@ -37,6 +49,7 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  // 로그인
   const logIn = function (payload) {
     const { username, password } = payload
 
@@ -48,8 +61,8 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
       .then((res) => {
-        console.log(res)
         token.value = res.data.token
+        currentUser.value = res.data
         router.push({ name: 'CommunityView' })
       })
       .catch((err) => {
@@ -57,13 +70,15 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  // 로그아웃
   const logOut = function () {
     axios({
       method: 'delete',
       url: `${API_URL}/accounts/log/`,
     })
-      .then((res) => {
+      .then(() => {
         token.value = null
+        currentUser.value = 0
         router.push({ name: 'ArticleView' })
       })
       .catch((err) => {
@@ -71,7 +86,76 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  const profileDetail = function (user_pk) {
+  // 게시판 종류 별/작성자 별 게시글 목록 조회
+  const getArticles = function (community_pk=0, user_pk=0) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/${community_pk}/articles/${user_pk}/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        articles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  // 특정 게시글 조회
+  const getArticle = function (article_pk) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/articles/${article_pk}/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) => {
+        article.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  
+  // 좋아요 한 게시글 목록 조회
+  const getLikedArticles = function (user_pk) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/${community_pk}/articles/${user_pk}`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        LikedArticles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  // 영화 목록 조회
+  const getMovies = function () {
+    axios({
+      method: 'get',
+      url: `${API_URL}/movies/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        movies.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+  
+  // 특정 프로필 조회
+  const getProfile = function (user_pk) {
     axios({
       method: 'GET',
       url: `${API_URL}/accounts/${user_pk}/person/`,
@@ -86,44 +170,25 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-  
-  // DRF에 article 조회 요청을 보내는 action
-  const getArticles = function () {
-    axios({
-      method: 'get',
-      url: `${API_URL}/community/articles/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
-    })
-      .then((res) =>{
-        // console.log(res)
-        articles.value = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
 
-  const getMovies = function () {
-    axios({
-      method: 'get',
-      url: `${API_URL}/movies/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
-    })
-      .then((res) =>{
-        console.log(res)
-        movies.value = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
-  
-  return { API_URL, signUp, logIn, token, isLogin, logOut, profileDetail, profileData, 
-    getArticles, articles, 
-    getMovies, movies,
+  return {
+    // Default
+    API_URL,
+
+    // Accounts
+    signUp, logIn, logOut,
+    token, currentUser, isLogin,
+
+    // Community
+    getArticles, getArticle, getLikedArticles,
+    articles, article, LikedArticles,
+
+    // Movie
+    getMovies,
+    movies,
+
+    // Profile
+    getProfile,
+    profile,
   }
 }, { persist: true })

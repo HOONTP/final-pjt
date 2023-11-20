@@ -3,11 +3,11 @@
     <h1>게시글 작성</h1>
     <form @submit.prevent="createArticle">
       <div>
-        <select name="board" v-model="community_id">
-          <option value="0">전체</option>
-          <option value="1">인기</option>
-          <option value="2">리뷰</option>
-          <option value="3">자유</option>
+        <select name="board" v-model="community_pk">
+          <option value="1">전체</option>
+          <option value="2">인기</option>
+          <option value="3">리뷰</option>
+          <option value="4">자유</option>
         </select>
       </div>
       <div>
@@ -31,26 +31,25 @@ import { useRouter } from 'vue-router'
 
 const title = ref(null)
 const content = ref(null)
-const community_id = ref(null)
+const community_pk = ref("1")  // 초기값 설정
 const store = useCounterStore()
 const router = useRouter()
 
 const createArticle = function () {
   axios({
     method: 'post',
-    url: `${store.API_URL}/community/articles/`,
+    url: `${store.API_URL}/community/${community_pk.value}/articles/${0}/`,
     data: {
       title: title.value,
       content: content.value,
-      board: community_id.value,
+      board: community_pk.value,
     },
     headers: {
       Authorization: `Token ${store.token}`
     }
   })
-    .then((res) => {
+    .then(() => {
       router.push({ name: 'CommunityView' })
-      console.log(res)
     })
     .catch((err) => {
       console.log(err)
