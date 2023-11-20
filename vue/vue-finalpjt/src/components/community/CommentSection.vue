@@ -35,7 +35,6 @@ const createComment = () => {
     url: `${store.API_URL}/community/articles/${route.params.id}/comments/`,
     data: {
       content: newComment.value,
-      article: route.params.id
     },
     headers: {
       Authorization: `Token ${store.token}`

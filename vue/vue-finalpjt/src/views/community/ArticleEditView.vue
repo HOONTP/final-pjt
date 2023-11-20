@@ -66,7 +66,7 @@ const updateArticle = function () {
       Authorization: `Token ${store.token}`
     }
   })
-    .then((res) => {
+    .then(() => {
       router.push({ name: 'ArticleDetailView' })
     })
     .catch((err) => {

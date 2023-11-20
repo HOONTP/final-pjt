@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="store.article && store.article.comments.length > 0">
+    <div v-if="store.article && store.article.comments && store.article.comments.length > 0">
       <h2>댓글 목록</h2>
       <ul>
         <li v-for="comment in store.article.comments" :key="comment.id">
@@ -40,7 +40,7 @@ const editComment = (commentId) => {
   if (updatedContent !== null) {
     axios({
       method: 'put',
-      url: `${store.API_URL}/community/comments/${commentId}/`,
+      url: `${store.API_URL}/community/articles/${route.params.id}/${commentId}/`,
       data: {
         content: updatedContent,
       },
@@ -65,7 +65,7 @@ const deleteComment = (commentId) => {
   if (confirmDelete) {
     axios({
       method: 'delete',
-      url: `${store.API_URL}/community/comments/${commentId}/`,
+      url: `${store.API_URL}/community/articles/${route.params.id}/${commentId}/`,
       headers: {
         Authorization: `Token ${store.token}`,
       },

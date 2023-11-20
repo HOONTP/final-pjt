@@ -2,20 +2,26 @@
   <div>
     <h1>Detail</h1>
     <div v-if="store.article">
+      <p>게시판 : {{ store.article.board }}</p>
       <p>제목 : {{ store.article.title }}</p>
       <p>내용 : {{ store.article.content }}</p>
       <p>작성일 : {{ store.article.created_at }}</p>
       <p>수정일 : {{ store.article.updated_at }}</p>
-      <p>좋아요 수 : {{ store.article.likes_users }}</p>
+      <p>좋아요 수 : {{ store.article.like_users ? store.article.like_users.length : 0 }}</p>
     </div>
 
     <!-- 좋아요 버튼 -->
-    <button @click="toggleLike" v-if="store.article">
-      {{ store.article.liked ? '좋아요 취소' : '좋아요' }}
+    <button @click="toggleLike">
+      {{ store.article.like_users && store.article.like_users.includes(store.currentUser.user_id) ? '좋아요 취소' : '좋아요' }}
     </button>
     <br>
 
-    <RouterLink v-if="store.article" :to="{ name: 'ArticleEditView', params: { id: store.article.id }}">
+    <RouterLink
+      v-if="store.article"
+      :to="{
+        name: 'ArticleEditView',
+        params: { id: store.article.id },
+      }">
       [글 수정]
     </RouterLink>
 
@@ -45,11 +51,10 @@ onMounted(() => {
 })
 
 const toggleLike = () => {
-  const isLiked = store.LikedArticles()
   // 게시글 좋아요/좋아요 취소 요청 보내기
   axios({
     method: 'post',
-    url: `${store.API_URL}/community/articles/${route.params.id}/like/`,
+    url: `${store.API_URL}/community/like/article/${route.params.id}/`,
     headers: {
       Authorization: `Token ${store.token}`,
     },

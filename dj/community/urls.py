@@ -14,12 +14,12 @@ urlpatterns = [
     # path('<int:review_pk>/like/', views.like, name='like'),
 
     
-    path('articles/', views.article), # 모든 게시글 조회 및 입력
+    path('<int:community_pk>/articles/<int:user_pk>/', views.article), # 모든 게시글 조회 및 입력
     path('articles/<int:article_pk>/', views.article_detail), # 게시글 상세 조회
     path('comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기
     path('articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'
-    path('comments/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
-    path('articles/<int:article_id>/like/', views.like_post),
-    path('comments/<int:comment_id>/like/', views.like_comment),
-    path('replies/<int:reply_id>/like/', views.like_reply),
+    path('articles/<int:article_pk>/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
+    path('like/article/<int:article_pk>/', views.like_article),
+    path('like/comment/<int:comment_pk>/', views.like_comment),
+    path('like/reply/<int:reply_pk>/', views.like_reply)
 ]
