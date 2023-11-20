@@ -114,6 +114,7 @@ def like_comment(request, comment_pk):
 @permission_classes([IsAuthenticated])
 def like_reply(request, reply_pk):
     reply = get_object_or_404(Reply, id=reply_pk)
+
     if request.user in reply.like_users.all():
         reply.like_users.remove(request.user)
     else:
