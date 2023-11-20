@@ -7,9 +7,6 @@
       />
       </div>
     </div>
-
-
-
     <div>
       <!-- 좌우 화살표 버튼 -->
       <button @click="prevPage">이전</button>
@@ -20,7 +17,6 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'

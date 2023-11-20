@@ -25,11 +25,15 @@ TMDB_API_KEY = config('TMDB_API_KEY')
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
-def movie_list(request):
+def movie_list(request, user_pk=0):
     if request.method == 'GET':
-        movies = get_list_or_404(Movie)
-        page = int(request.headers.get('page')) # headers의 정보 받는 방법
-        serializer = MovieListSerializer(movies[9*(page-1):9*page], many=True, partial=True)
+        if user_pk == 0:
+            movies = get_list_or_404(Movie)
+            page = int(request.headers.get('page')) # headers의 정보 받는 방법
+            serializer = MovieListSerializer(movies[9*(page-1):9*page], many=True, partial=True)
+        else:
+            movies = User.like_movies.all()
+            serializer = MovieListSerializer(movies, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = MovieSerializer(data=request.data)

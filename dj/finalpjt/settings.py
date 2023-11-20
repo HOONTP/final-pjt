@@ -51,11 +51,8 @@ INSTALLED_APPS = [
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'dj_rest_auth.registration',
-
-
     'corsheaders',
     'drf_spectacular',
-
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,10 +93,10 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
 ]
-# CORS_ALLOW_HEADERS = [ # 왜 없어도 댐?
-#     'authorization',
-#     # 'page',
-# ]
+CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 이후 잠깐 된듯.
+    'authorization',
+    'page',
+]
 
 ROOT_URLCONF = 'finalpjt.urls'
 
