@@ -12,21 +12,17 @@ from django.http import JsonResponse
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from rest_framework.authtoken.models import Token
-
-
-# @api_view(['POST'])
-# def user_create(request):
-#     User = get_user_model()
-
-
+from movies.models import Movie, Director, Genre
 
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
+@authentication_classes([])
 def person(request, user_pk=-1):
     User = get_user_model()
     print(user_pk)
@@ -56,15 +52,18 @@ def person(request, user_pk=-1):
         else:
             print(serializer.errors) 
     elif request.method == 'DELETE':
-        user.delete()
+        if user == request.user:
+            user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     elif request.method == 'PUT':
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+        if user == request.user:
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data)
 
 @api_view(['POST', 'DELETE'])
+@authentication_classes([])
 def log(request):
     if request.method == 'POST':
         username = request.data.get('username')
@@ -113,3 +112,29 @@ def follow(request, user_pk):
         else:
             person.followers.add(request.user)
             return Response({'message': 'unfollow success'})
+
+@api_view(['GET'])
+@authentication_classes([])
+def recommend_movie(request):#like_movies
+    User = get_user_model()
+    user = get_object_or_404(User, pk=1)
+    like_movies = user.like_movies.all()
+    GR = get_list_or_404(Genre)
+    movies = get_list_or_404(Movie)
+    genres = {}
+    for G in GR:
+        genres[G.id] = 0
+    if len(like_movies) >= 5:
+        pass
+    directors = set()
+    for movie in like_movies:
+        directors.add(get_object_or_404(Director, pk=movie.director_id))
+        movie_genres = movie.genre_ids.all()
+        for genre in movie_genres:
+            genres[genre.id] += 1
+        print(movie_genres)
+        print(directors)
+        print(get_object_or_404(Director, pk=movie.director_id).name)
+    print(genres)
+
+    return JsonResponse({'a':'1'})

@@ -14,8 +14,22 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='like_articles', blank=True, null=True
+        settings.AUTH_USER_MODEL, related_name='like_articles'
     )
+    def save(self, *args, **kwargs):
+        # 이전 데이터를 가져옵니다.
+        try:
+            old_data = Article.objects.get(pk=self.pk)
+        except Article.DoesNotExist:
+            # 새로운 데이터일 경우에는 기본 save 메서드를 호출하여 저장합니다.
+            super(Article, self).save(*args, **kwargs)
+            return
+
+        # title이나 content가 변경되었을 때만 updated_at을 업데이트합니다.
+        if self.title != old_data.title or self.content != old_data.content:
+            self.updated_at = Article.now()
+
+        super(Article, self).save(*args, **kwargs)
 
 
 class Comment(models.Model):
@@ -26,7 +40,7 @@ class Comment(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     like_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name='like_comments', blank=True, null=True
+        settings.AUTH_USER_MODEL, related_name='like_comments'
     )
 
 
@@ -35,4 +49,4 @@ class Reply(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_replies', blank=True, null=True)
+    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_replies')
