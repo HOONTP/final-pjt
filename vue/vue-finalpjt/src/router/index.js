@@ -89,7 +89,7 @@ const router = createRouter({
       component: MovieView
     },
     {
-      path: '/movie/:movieId',
+      path: '/movie/:id',
       name: 'MovieDetailView',
       component: MovieDetailView
     },

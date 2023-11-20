@@ -8,7 +8,7 @@ from django.http import JsonResponse
 
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 
@@ -24,7 +24,7 @@ from datetime import datetime
 TMDB_API_KEY = config('TMDB_API_KEY')
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
 def movie_list(request):
     if request.method == 'GET':
         movies = get_list_or_404(Movie)
@@ -37,7 +37,7 @@ def movie_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
 
@@ -59,8 +59,8 @@ def movie_detail(request, movie_pk):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def review_list(request):
-    reviews = get_list_or_404(Review)
+def review_list(request, user_pk):
+    reviews = get_list_or_404(Review, pk=user_pk)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 

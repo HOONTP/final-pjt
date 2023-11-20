@@ -38,15 +38,21 @@ class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-    )
+        )
     like_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='like_comments'
-    )
+        )
 
 
 class Reply(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
-    like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_replies')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE
+        )
+    comment = models.ForeignKey(
+        Comment, on_delete=models.CASCADE, related_name='replies'
+        )
+    like_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='like_replies'
+        )

@@ -38,9 +38,8 @@ onMounted(async () => {
 
 
 const goDetail = (movie) => {
-  router.push(`/${movie.id}`)
+  router.push({ name: 'MovieDetailView', params: { id: movie.id } });
 }
-
 </script>
 
 <style scoped>
