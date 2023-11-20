@@ -1,9 +1,9 @@
 <template>
     <div class="movie-details">
       <img
-        v-if="movie && movie.poster_path"
-        :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
-        :alt="movie.title"
+        v-if="store.movie && store.movie.poster_path"
+        :src="'https://image.tmdb.org/t/p/w500/' + store.movie.poster_path"
+        :alt="store.movie.title"
         class="movie-poster"
       />
       <div v-if="store.movie" class="movie-info">
@@ -45,7 +45,7 @@
 
   onMounted(async () => {
     store.getMovie(movieId)
-    console.log(store.movies);
+    console.log(store.movie);
   })
   </script>
   

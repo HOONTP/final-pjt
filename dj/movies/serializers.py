@@ -36,7 +36,12 @@ Reviews = ReviewSerializer(many=True, read_only=True)
 class MovieSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
     review_count = serializers.IntegerField(source='reviews.count', read_only=True)
-
+    class GenreNameSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Genre
+            fields = ('name',)
+    genres = GenreNameSerializer(many=True, read_only=True, source='genre_ids')
+    # source로 참조될 데이터를 줘야 serializer할 때에 해당 필드에서 적합한 데이터를 가져옴.
     class Meta:
         model = Movie
         fields = '__all__'

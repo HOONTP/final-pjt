@@ -138,12 +138,13 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   // 영화 목록 조회
-  const getMovies = function () {
+  const getMovies = function (page) {
     axios({
       method: 'get',
       url: `${API_URL}/movies/`,
       headers: {
-        Authorization: `Token ${token.value}`
+        Authorization: `Token ${token.value}`,
+        'page': page,
       }
     })
       .then((res) =>{

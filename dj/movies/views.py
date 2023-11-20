@@ -28,7 +28,8 @@ TMDB_API_KEY = config('TMDB_API_KEY')
 def movie_list(request):
     if request.method == 'GET':
         movies = get_list_or_404(Movie)
-        serializer = MovieListSerializer(movies, many=True, partial=True)
+        page = int(request.headers.get('page')) # headers의 정보 받는 방법
+        serializer = MovieListSerializer(movies[9*(page-1):9*page], many=True, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = MovieSerializer(data=request.data)
