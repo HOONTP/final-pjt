@@ -66,6 +66,7 @@ const toggleLike = () => {
     .then(() => {
       // 좋아요/좋아요 취소 요청이 성공하면 게시글 데이터를 다시 불러와 갱신
       store.getArticle(route.params.id)
+      console.log(store.article)
     })
     .catch((err) => {
       console.error('좋아요 토글 에러:', err)

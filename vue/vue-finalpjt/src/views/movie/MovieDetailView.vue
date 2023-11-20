@@ -1,25 +1,25 @@
 <template>
     <div class="movie-details">
       <img
-        v-if="movie && movie.poster_path"
-        :src="'https://image.tmdb.org/t/p/w500/' + movie.poster_path"
-        :alt="movie.title"
+        v-if="store.movie && store.movie.poster_path"
+        :src="'https://image.tmdb.org/t/p/w500/' + store.movie.poster_path"
+        :alt="store.movie.title"
         class="movie-poster"
       />
-      <div v-if="movie" class="movie-info">
-        <h2>{{ movie.original_title }}</h2>
-        <p><strong>개봉일:</strong> {{ movie.release_date }}</p>
-        <p><strong>러닝타임:</strong> {{ movie.runtime }} 분</p>
-        <p><strong>TMDB 평점:</strong> {{ movie.vote_average }}</p>
+      <div v-if="store.movie" class="movie-info">
+        <h2>{{ store.movie.original_title }}</h2>
+        <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
+        <p><strong>러닝타임:</strong> {{ store.movie.runtime }} 분</p>
+        <p><strong>TMDB 평점:</strong> {{ store.movie.vote_average }}</p>
         <h2><strong>장르</strong></h2>
         <p>
-          <span v-for="(genre, index) in movie.genres">
+          <span v-for="(genre, index) in store.movie.genres">
             {{ genre.name }}
-            <span v-if="index < movie.genres.length - 1">, </span>
+            <span v-if="index < store.movie.genres.length - 1">, </span>
           </span>
         </p>
         <h2>줄거리</h2>
-        <p>{{ movie.overview }}</p>
+        <p>{{ store.movie.overview }}</p>
         <h2>공식 예고편</h2>
         <p>공식 예고편이 없습니다.</p>
         <!-- <div v-if="officialTrailer">
@@ -36,26 +36,16 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
-  import axios from 'axios'
+  import { useCounterStore } from '@/stores/counter'
   
   const route = useRoute()
   const movie = ref({})
-  const movieId = route.params.movieId
-  const apiKey = 'd1f7efa5fffb21e196b176b6a9ac8029'
-  const apiUrl = `https://api.themoviedb.org/3/movie/${movieId}`
-  
+  const movieId = route.params.id
+  const store = useCounterStore()
+
   onMounted(async () => {
-    try {
-      const response = await axios.get(apiUrl, {
-        params: {
-          api_key: apiKey,
-          language: 'ko-KR',
-        },
-      })
-      movie.value = response.data
-    } catch (error) {
-      console.error('Error:', error.message)
-    }
+    store.getMovie(movieId)
+    console.log(store.movie);
   })
   </script>
   
