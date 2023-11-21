@@ -213,20 +213,17 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-
-
-
   // 특정 프로필 조회
   const getProfile = function (user_pk) {
     axios({
-      method: 'GET',
+      method: 'get',
       url: `${API_URL}/accounts/${user_pk}/person/`,
       headers: {
         Authorization: `Token ${token.value}`
       }
     })
       .then((res) => {
-        profileData.value = res
+        profile.value = res
       })
       .catch((err) => {
         console.log(err)
@@ -250,7 +247,7 @@ export const useCounterStore = defineStore('counter', () => {
     movies, movie, recommendmovies, LikedMovies,
 
     // Profile
-    getProfile,
+    getProfile, 
     profile,
   }
 }, { persist: true })

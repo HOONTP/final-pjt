@@ -101,7 +101,7 @@ CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 
     'dnt',
     'origin',
     'user-agent',
-    'x-csrftoken',
+    'x-csrftoken',  # Include if you're using CSRF protection
     'x-requested-with',
     'page',
 ]

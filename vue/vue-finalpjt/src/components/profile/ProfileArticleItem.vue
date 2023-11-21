@@ -1,8 +1,9 @@
 <template>
   <div>
-    <h5>{{ myArticle.id }}</h5>
-    <p>{{ myArticle.title }}</p>
-    <RouterLink :to="{ name: 'ArticleDetailView', params: { id: myArticle.id }}">
+    <p>{{ article }}</p>
+    <h5>{{ article.id }}</h5>
+    <p>{{ article.title }}</p>
+    <RouterLink :to="{ name: 'ArticleDetailView', params: { id: article.id }}">
       [Detail]
     </RouterLink>
     <hr>
@@ -13,6 +14,6 @@
 import { RouterLink } from 'vue-router'
 
 defineProps({
-  myArticle: Object
+  article: Object
 })
 </script>

@@ -4,13 +4,13 @@
       <p>[프로필 사진]</p>
     </div>
     <div id="profile-info">
-      <p>[유저 닉네임]</p>
+      <h1>{{ store.profile.data.nickname }}</h1>
       <hr>
       <p>[한 줄 자기소개]</p>
       <br>
       <div id="profile-stats">
         <div class="stat">
-          <p class="stat-value">[게시물 수]</p>
+          <p class="stat-value">[게시글 수]</p>
           <p>게시물</p>
         </div>
         <div class="stat">
@@ -31,6 +31,19 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import { useCounterStore } from '@/stores/counter'
+
+const store = useCounterStore()
+const props = defineProps(['user_pk'])
+
+onMounted(() => {
+  // 특정 유저의 프로필 데이터 가져오기
+  store.getProfile(user_pk)
+    .catch((err) => {
+      console.error(err)
+    })
+})
 
 </script>
 
