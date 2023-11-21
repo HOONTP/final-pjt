@@ -94,7 +94,15 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
 ]
 CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 이후 잠깐 된듯.
+    'accept',
+    'accept-encoding',
     'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',  # Include if you're using CSRF protection
+    'x-requested-with',
     'page',
 ]
 
