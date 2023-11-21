@@ -1,6 +1,9 @@
 <template>
   <div>
     <div class="movie-container">
+      <div>
+        <MovieRecommend />
+      </div>
       <div v-for="movie in store.movies" :key="movie.id" class="movie-box">
       <MovieCard
       :movie="movie"
@@ -22,7 +25,7 @@ import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 // import axios from 'axios'
 import MovieCard from '@/components/movie/MovieCard.vue'
-
+import MovieRecommend from '@/components/movie/MovieRecommend.vue'
 const store = useCounterStore()
 const router = useRouter()
 const page = ref(1)
