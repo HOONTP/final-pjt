@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -27,7 +27,8 @@ export const useCounterStore = defineStore('counter', () => {
   // Movie
   const movies = ref([])
   const movie = ref([])
-
+  const recommendmovies = ref([])
+  const LikedMovies = ref([])
   // Profile
   const profile = ref([])
   
@@ -155,7 +156,46 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
-  
+  // 추천 영화 조회
+  const getRecommendMovie = function () {
+    axios({
+      method: 'get',
+      url: `${API_URL}/movies/recommend/`,
+      headers: {
+        Authorization: `Token ${token.value}`,
+      }
+  })
+    .then((res) => {
+      recommendmovies.value = res.data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+  // 영화 좋아요 목록 감시 => 추천 영화 업데이트
+  watch(LikedMovies, (newValue, oldValue) => {
+    getRecommendMovie()
+  })
+
+  // 영화 좋아요 및 취소
+  const likeMovie = function (movie_pk) {
+    axios({
+      method: 'post',
+      url: `${API_URL}/movies/${movie_pk}/likes/`,
+      headers: {
+        Authorization: `Token ${token.value}`,
+      }
+  })
+    .then((res) => {
+      LikedMovies.value = res.data
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
+
+
   // 단일 영화 조회
   const getMovie = function (id) {
     axios({
@@ -203,8 +243,8 @@ export const useCounterStore = defineStore('counter', () => {
     articles, article, LikedArticles,
 
     // Movie
-    getMovies, getMovie,
-    movies, movie,
+    getMovies, getMovie, getRecommendMovie, likeMovie,
+    movies, movie, recommendmovies, LikedMovies,
 
     // Profile
     getProfile, 

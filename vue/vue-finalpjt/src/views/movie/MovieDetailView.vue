@@ -7,6 +7,13 @@
         class="movie-poster"
       />
       <div v-if="store.movie" class="movie-info">
+        <!-- 댓글 좋아요 버튼 -->
+        <button @click="toggleLike(store.movie.id)">
+          {{ store.likedMovies && store.likedMovies.includes(store.movie) ? '좋아요 취소' : '좋아요' }}
+          {{ store.movie.like_users ? store.movie.like_users.length : 0 }}
+        </button>
+        <br>
+        
         <h2>{{ store.movie.original_title }}</h2>
         <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
         <p><strong>러닝타임:</strong> {{ store.movie.runtime }} 분</p>
@@ -30,6 +37,7 @@
       <div v-else>
         <p>Loading...</p>
       </div>
+      <MovieRecommend />
     </div>
   </template>
   
@@ -37,9 +45,9 @@
   import { ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { useCounterStore } from '@/stores/counter'
-  
+  import MovieRecommend from '@/components/movie/MovieRecommend.vue'
+
   const route = useRoute()
-  const movie = ref({})
   const movieId = route.params.id
   const store = useCounterStore()
 
@@ -47,6 +55,11 @@
     store.getMovie(movieId)
     console.log(store.movie);
   })
+  
+  const toggleLike = (movieId) => {
+    store.likeMovie(movieId)
+    store.getMovie(movieId)
+  }
   </script>
   
   <style scoped>

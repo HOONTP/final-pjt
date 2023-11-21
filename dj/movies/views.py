@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from .models import Movie, Review, Genre, Actor, Director
-from django.contrib.auth import get_user_model as User
+from django.contrib.auth import get_user_model
 from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
 from django.http import JsonResponse
 
@@ -19,16 +19,18 @@ from decouple import config
 
 from django.utils.timezone import make_aware
 from datetime import datetime
-
+import math
 
 TMDB_API_KEY = config('TMDB_API_KEY')
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
 def movie_list(request, user_pk=0):
+    User = get_user_model()
     if request.method == 'GET':
         if user_pk == 0:
-            movies = get_list_or_404(Movie)
+            # movies = get_list_or_404(Movie)
+            movies = Movie.objects.all().order_by('-popularity')
             page = int(request.headers.get('page')) # headers의 정보 받는 방법
             serializer = MovieListSerializer(movies[9*(page-1):9*page], many=True, partial=True)
         else:
@@ -100,24 +102,81 @@ def create_review(request, movie_pk):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def add_user_to_movie_likes(request, movie_pk, user_pk):
+def add_user_to_movie_likes(request, movie_pk):
     # POST 요청의 본문에서 영화 ID와 사용자 ID를 가져옴
     # Postman에서 user정보를 어케하지
+    User = get_user_model()
     try:
         movie = Movie.objects.get(pk=movie_pk)
-        user = User.objects.get(pk=user_pk)
+        user = get_object_or_404(User, pk=request.user.pk)
         # N:M 관계에 사용자를 추가
         if user in movie.like_users.all():
             movie.like_users.remove(user)
-            return Response({'message': 'User removed to movie likes successfully.'})
         else:
             movie.like_users.add(user)
-            return Response({'message': 'User added to movie likes successfully.'})
-    except Movie.DoesNotExist:
-        return Response({'message': 'Movie not found.'}, status=400)
-    except User.DoesNotExist:
-        return Response({'message': 'User not found.'}, status=400)
-    
+        # 좋아요 누른 목록을 줘야함
+        movies = user.like_movies.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        print(e)
+
+
+from django.http import Http404
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def recommend_movie(request):#like_movies
+    print(request.user)
+    User = get_user_model()
+    try:
+        user = get_object_or_404(User, pk=request.user.pk)
+    except Http404:
+        return Response({'message': 'User not found'}, status=404)
+    like_movies = user.like_movies.all()
+    GR = get_list_or_404(Genre)
+    movies = get_list_or_404(Movie)
+    genres = {}
+    for G in GR:
+        genres[G.id] = 0
+    if len(like_movies) >= 5:
+        directors = set()
+        for movie in like_movies:
+            directors.add(get_object_or_404(Director, pk=movie.director_id))
+            movie_genres = movie.genre_ids.all()
+            for genre in movie_genres:
+                genres[genre.id] += 1
+        value_lst = []
+        for movie in movies:
+            genre_value = 0
+            if movie.director in directors and movie not in like_movies:
+                for genre, value in genres.items():
+                    cal_value = math.log(3+value) * 10
+                    # if get_object_or_404(Genre, pk=genre) in movie.genre_ids.all() and genre_value < cal_value:
+                    if movie.genre_ids.filter(pk=genre).exists() and genre_value < cal_value:
+                        print(cal_value)
+                        genre_value = cal_value
+            sums_value = min(genre_value, 50) + movie.popularity + (movie.vote_average * 5)
+            value_lst.append([sums_value, movie])
+        sorted_list = sorted(value_lst, key=lambda x: x[0], reverse=True)
+        show_lst = []
+        cnt = 0
+        print(sorted_list)
+        for getMovie in sorted_list:
+            show_lst.append(getMovie[1])
+            cnt += 1
+            if cnt >= 5:
+                break
+        serializer = MovieListSerializer(show_lst, many=True, partial=True)
+        return Response(serializer.data)
+    else:
+        return JsonResponse({'message':'관심 영화가 5개 이상 필요합니다.'})
+
+
+
+
+
+
 '''
 def index(request):
     movie = get_list_or_404()
