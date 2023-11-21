@@ -158,8 +158,8 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
   // 추천 영화 조회
-  const getRecommendMovie = function () {
-    axios({
+  const getRecommendMovie = async function () {
+    await axios({
       method: 'get',
       url: `${API_URL}/movies/recommend/`,
       headers: {
@@ -192,6 +192,7 @@ export const useCounterStore = defineStore('counter', () => {
   })
     .then((res) => {
       LikedMovies.value = res.data
+      getMovie(movie_pk)
     })
     .catch((err) => {
       console.log(err)

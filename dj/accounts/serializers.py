@@ -17,6 +17,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReplySerializer(serializers.ModelSerializer):
+    article = serializers.PrimaryKeyRelatedField(source='comment.article', read_only=True)
     class Meta:
         model = Reply
         fields = '__all__'

@@ -11,6 +11,7 @@
           {{ store.LikedMovies && store.LikedMovies.some(item => item.id === store.movie.id) ? '좋아요 취소' : '좋아요' }}
           {{ store.movie.like_users ? store.movie.like_users.length : 0 }}
         </button>
+        {{ store.movie.like_users }}
         <br>
         <h2>{{ store.movie.original_title }}</h2>
         <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
@@ -52,6 +53,7 @@
   const store = useCounterStore()
   
   onMounted(async () => {
+    console.log(movieId);
     store.getMovie(movieId)
     console.log(store.movie);
   })
