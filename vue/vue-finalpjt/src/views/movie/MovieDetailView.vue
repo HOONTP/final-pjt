@@ -7,7 +7,7 @@
         class="movie-poster"
       />
       <div v-if="store.movie" class="movie-info">
-        <!-- 댓글 좋아요 버튼 -->
+        <!-- 영화 좋아요 버튼 -->
         <button @click="toggleLike(store.movie.id)">
           {{ store.likedMovies && store.likedMovies.includes(store.movie) ? '좋아요 취소' : '좋아요' }}
           {{ store.movie.like_users ? store.movie.like_users.length : 0 }}
@@ -37,14 +37,20 @@
       <div v-else>
         <p>Loading...</p>
       </div>
+
+      <!-- 영화 리뷰 목록 -->
+      <MovieReview />
+
+      <!-- 추천 영화 목록 -->
       <MovieRecommend />
     </div>
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue'
+  import { onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { useCounterStore } from '@/stores/counter'
+  import MovieReview from '@/components/movie/MovieReview.vue'
   import MovieRecommend from '@/components/movie/MovieRecommend.vue'
 
   const route = useRoute()

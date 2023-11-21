@@ -45,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
     user_comments = serializers.SerializerMethodField()
     user_replies = serializers.SerializerMethodField()
     user_Reviews = serializers.SerializerMethodField()
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     
     class Meta:
         model = get_user_model()
