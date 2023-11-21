@@ -7,13 +7,11 @@
         class="movie-poster"
       />
       <div v-if="store.movie" class="movie-info">
-        <!-- 댓글 좋아요 버튼 -->
         <button @click="toggleLike(store.movie.id)">
-          {{ store.likedMovies && store.likedMovies.includes(store.movie) ? '좋아요 취소' : '좋아요' }}
+          {{ store.LikedMovies && store.LikedMovies.some(item => item.id === store.movie.id) ? '좋아요 취소' : '좋아요' }}
           {{ store.movie.like_users ? store.movie.like_users.length : 0 }}
         </button>
         <br>
-        
         <h2>{{ store.movie.original_title }}</h2>
         <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
         <p><strong>러닝타임:</strong> {{ store.movie.runtime }} 분</p>
@@ -33,6 +31,8 @@
         </div>
         <div v-else>
         </div> -->
+        <h3>리뷰</h3>
+        <p>{{ store.movie.reviews }}</p>
       </div>
       <div v-else>
         <p>Loading...</p>
@@ -50,7 +50,7 @@
   const route = useRoute()
   const movieId = route.params.id
   const store = useCounterStore()
-
+  
   onMounted(async () => {
     store.getMovie(movieId)
     console.log(store.movie);
