@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>id: {{ article.id }}</p>
+    <p>작성자: {{ article.user_nickname }}</p>
     <p>제목: {{ article.title }}</p>
     <p>내용: {{ article.content }}</p>
     <RouterLink :to="{ name: 'ArticleDetailView', params: { id: article.id }}">

@@ -8,6 +8,8 @@ urlpatterns = [
     path('comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기
     path('articles/<int:article_pk>/comments/', views.comment_detail), # 'POST'
     path('articles/<int:article_pk>/<int:comment_pk>/', views.comment_detail),#'DELETE','PUT'
+    path('comments/<int:comment_pk>/replies/', views.reply_detail), # 'POST'
+    path('comments/<int:comment_pk>/<int:reply_pk>/', views.reply_detail),#'DELETE','PUT'
     path('like/article/<int:article_pk>/', views.like_article),
     path('like/comment/<int:comment_pk>/', views.like_comment),
     path('like/reply/<int:reply_pk>/', views.like_reply),

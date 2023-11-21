@@ -7,12 +7,12 @@
       <p>내용 : {{ store.article.content }}</p>
       <p>작성일 : {{ store.article.created_at }}</p>
       <p>수정일 : {{ store.article.updated_at }}</p>
-      <p>좋아요 수 : {{ store.article.like_users ? store.article.like_users.length : 0 }}</p>
     </div>
 
     <!-- 좋아요 버튼 -->
     <button @click="toggleLike">
       {{ store.article.like_users && store.article.like_users.includes(store.currentUser.user_id) ? '좋아요 취소' : '좋아요' }}
+      {{ store.article.like_users ? store.article.like_users.length : 0 }}
     </button>
     <br>
 
