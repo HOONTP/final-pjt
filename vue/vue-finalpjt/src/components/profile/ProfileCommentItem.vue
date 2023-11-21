@@ -1,11 +1,12 @@
 <template>
   <div>
-    <h5>{{ myComment.id }}</h5>
-    <p>{{ myComment.title }}</p>
-    <!-- 내가 쓴 댓글을 선택하면 해당 댓글이 작성 된 게시글로 이동해야함.. -->
-    <!-- <RouterLink :to="{ name: 'ArticleDetailView', params: { id: myComment.id }}">
+    <p>{{ comment }}</p>
+    <h5>{{ comment.id }}</h5>
+    <p>{{ comment.title }}</p>
+    <!-- 내가 쓴 댓글을 선택하면 해당 댓글이 작성 된 게시글로 이동 -->
+    <RouterLink :to="{ name: 'ArticleDetailView', params: { id: comment.article_id }}">
       [Detail]
-    </RouterLink> -->
+    </RouterLink>
     <hr>
   </div>
 </template>
@@ -14,6 +15,6 @@
 import { RouterLink } from 'vue-router'
 
 defineProps({
-  myComment: Object
+  comment: Object
 })
 </script>

@@ -6,7 +6,13 @@
 
       <!-- 로그인 한 경우 -->
       <div v-if="store.isLogin">
-        <RouterLink :to="{ name: 'ProfileView', params: { nickName: 'desired-username' } }">프로필</RouterLink> |
+        <RouterLink
+          v-if="store.currentUser.user_id"
+          :to="{
+            name: 'ProfileView',
+            params: { nickName: store.currentUser.user_id }
+            }">프로필
+        </RouterLink> |
         <form @submit.prevent="store.logOut">
         <input type="submit" value="로그아웃">
         </form>
@@ -26,6 +32,7 @@
 import { useCounterStore } from '@/stores/counter'
 import { RouterView, RouterLink } from 'vue-router'
 const store = useCounterStore()
+
 </script>
 
 <style scoped>
