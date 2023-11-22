@@ -3,7 +3,7 @@ from django.db.models import Q, Count
 from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -14,7 +14,7 @@ from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerial
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def article(request, community_pk=0, user_pk=0):
     if request.method == 'GET':
         if user_pk == 0:
@@ -26,6 +26,7 @@ def article(request, community_pk=0, user_pk=0):
         serializer = ArticleListSerializer(articles, many=True, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
+        print(request.data)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             print(request.data)
@@ -33,11 +34,12 @@ def article(request, community_pk=0, user_pk=0):
             # serializer.save()
             serializer.save(user=request.user, board=board)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@authentication_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def article_detail(request, article_pk):
     # movie = Movie.objects.get(pk=movie_pk)
     article = get_object_or_404(Article, pk=article_pk)
@@ -48,9 +50,12 @@ def article_detail(request, article_pk):
         return Response(serializer.data)       
         
     elif request.method == 'DELETE':
+        print(article.user, request.user)
         if article.user == request.user:
             article.is_active = False
             return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         
     elif request.method == 'PUT':
         serializer = ArticleSerializer(article, data=request.data, partial=True)

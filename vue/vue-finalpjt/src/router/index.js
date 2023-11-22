@@ -6,7 +6,6 @@ import LogInView from '@/views/accounts/LogInView.vue'
 import SignUpView from '@/views/accounts/SignUpView.vue'
 
 // Community
-import CommunityView from '@/views/community/CommunityView.vue'
 import CommunityFreeView from '@/views/community/CommunityFreeView.vue'
 import CommunityHotView from '@/views/community/CommunityHotView.vue'
 import CommunityReviewView from '@/views/community/CommunityReviewView.vue'
@@ -40,11 +39,7 @@ const router = createRouter({
       component: SignUpView
     },
 
-    {
-      path: '/community',
-      name: 'CommunityView',
-      component: CommunityView
-    },
+    // Community
     {
       path: '/community/free',
       name: 'CommunityFreeView',
@@ -68,7 +63,8 @@ const router = createRouter({
     {
       path: '/articles/create',
       name: 'ArticleCreateView',
-      component: ArticleCreateView
+      component: ArticleCreateView,
+      props: route => ({ board1: route.params.board1 }) // 이 부분 추가
     },
     {
       path: '/articles/:id',
