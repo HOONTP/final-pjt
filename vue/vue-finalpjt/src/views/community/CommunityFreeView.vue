@@ -7,7 +7,6 @@
 
 <script setup>
 import ArticleList from '@/components/community/ArticleList.vue'
-
 </script>
 
 <style scoped>

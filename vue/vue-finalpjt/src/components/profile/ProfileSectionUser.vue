@@ -1,5 +1,5 @@
 <template>
-  {{ store.profile }}
+  <!-- {{ store.profile }} -->
   <div id="profile-container">
     <div id="profile-picture">
       <p>[프로필 사진]</p>

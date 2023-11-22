@@ -5,6 +5,7 @@ from .models import Movie, Review, Genre, Actor, Director
 from django.contrib.auth import get_user_model
 from .serializers import MovieListSerializer, MovieSerializer, ReviewSerializer
 from django.http import JsonResponse
+from django.db.models import Q
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -65,23 +66,35 @@ def movie_detail(request, movie_pk):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def review_list(request, user_pk):
+def review_list(request, user_pk=2):
     reviews = get_list_or_404(Review, pk=user_pk)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'DELETE', 'PUT'])
+@api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticated])
 def review_detail(request, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'GET':
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
+    elif request.method == 'POST': # 좋아요 기능
+        User = get_user_model()
+        user = get_object_or_404(User, pk=request.user.pk)
+        if user in review.like_users.all():
+            review.like_users.remove(user)
+        else:
+            review.like_users.add(user)
+        # 좋아요 누른 목록을 줘야함
+        movie = get_object_or_404(Movie, pk=review.movie)
+        serializer = MovieSerializer(movie, many=True)
+        return Response(serializer.data) # 리뷰 좋아요시 디테일 무비를 다시보내기
     elif request.method == 'DELETE':
-        # if Review.user == request.user:
-        review.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if Review.user == request.user:
+            review.is_active = False
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PUT':
         serializer = ReviewSerializer(review, data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -154,14 +167,14 @@ def recommend_movie(request):#like_movies
                     cal_value = math.log(3+value) * 10
                     # if get_object_or_404(Genre, pk=genre) in movie.genre_ids.all() and genre_value < cal_value:
                     if movie.genre_ids.filter(pk=genre).exists() and genre_value < cal_value:
-                        print(cal_value)
+                        # print(cal_value)
                         genre_value = cal_value
             sums_value = min(genre_value, 50) + movie.popularity + (movie.vote_average * 5)
             value_lst.append([sums_value, movie])
         sorted_list = sorted(value_lst, key=lambda x: x[0], reverse=True)
         show_lst = []
         cnt = 0
-        print(sorted_list)
+        # print(sorted_list)
         for getMovie in sorted_list:
             show_lst.append(getMovie[1])
             cnt += 1
@@ -173,8 +186,19 @@ def recommend_movie(request):#like_movies
         return JsonResponse({'message':'관심 영화가 5개 이상 필요합니다.'})
 
 
-
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def search_movie(request):
+    keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    searched_movies = Movie.objects.filter(
+        Q(title__icontains=keyword) |
+        Q(original_title__icontains=keyword)
+        ).distinct()
+    if searched_movies:
+        serializer = MovieListSerializer(searched_movies, many=True, partial=True)
+        return Response(serializer.data)
+    else:
+        return JsonResponse({'message': '검색 결과가 없습니다.'})
 
 
 '''
