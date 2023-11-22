@@ -221,7 +221,7 @@ export const useCounterStore = defineStore('counter', () => {
   const getMovieReview = function (movieId) {
     axios({
       method: 'get',
-      url: `${API_URL}/reviews/${movieId}/`,
+      url: `${API_URL}/reviews/`,
       headers: {
         // Authorization: `Token ${token.value}`
         movie: movieId

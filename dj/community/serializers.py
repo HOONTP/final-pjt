@@ -27,7 +27,7 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('user', 'article', 'like_users',)
 
 class ArticleSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True) # 관계모델에서 related값과 동일하게
+    comments = CommentSerializer(many=True, read_only=True, required=False) # 관계모델에서 related값과 동일하게
     user_nickname = serializers.CharField(source='user.nickname', read_only=True)
     class Meta:
         model = Article

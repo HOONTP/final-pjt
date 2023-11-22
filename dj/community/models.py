@@ -10,7 +10,7 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
     title = models.CharField(max_length=100)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=False)
+    updated_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )

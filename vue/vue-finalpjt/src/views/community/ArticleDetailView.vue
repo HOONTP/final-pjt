@@ -1,8 +1,10 @@
 <template>
   <div>
-    <h1>Detail</h1>
+    <!-- Community Nav 바 -->
+    <CommunityNav />
+    
+    <h2>{{ getBoardType(store.article.board) }} 게시판</h2>
     <div v-if="store.article">
-      <p>게시판 : {{ store.article.board }}</p>
       <p>제목 : {{ store.article.title }}</p>
       <p>내용 : {{ store.article.content }}</p>
       <p>작성일 : {{ store.article.created_at }}</p>
@@ -43,6 +45,7 @@ import { RouterLink } from 'vue-router'
 import { onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRoute, useRouter } from 'vue-router'
+import CommunityNav from '@/components/community/CommunityNav.vue'
 import CommentSection from '@/components/community/CommentSection.vue'
 
 const store = useCounterStore()
@@ -84,15 +87,32 @@ const deleteArticle = () => {
   })
     .then(() => {
       // 삭제가 성공하면 홈 화면으로 이동
-      router.push({ name: 'CommunityView' })
+      router.push({ name: 'CommunityTotalView' })
       console.log('Article deleted successfully')
     })
     .catch((err) => {
       console.log(err)
     })
 }
+
+const getBoardType = (board) => {
+  switch (board) {
+    case 1:
+      return '전체';
+    case 2:
+      return '인기';
+    case 3:
+      return '리뷰';
+    case 4:
+      return '자유';
+    default:
+      return '';
+  }
+}
 </script>
 
 <style scoped>
-
+h2 {
+  margin-top: 100px;  /* header의 높이 */
+}
 </style>

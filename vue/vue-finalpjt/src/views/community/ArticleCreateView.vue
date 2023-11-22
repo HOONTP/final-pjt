@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1>게시글 작성</h1>
+    <!-- Community Nav 바 -->
+    <CommunityNav />
+    
+    <h2>게시글 작성</h2>
     <form @submit.prevent="createArticle">
       <div>
         <select name="board" v-model="community_pk">
@@ -28,6 +31,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useCounterStore } from '@/stores/counter'
 import { useRouter } from 'vue-router'
+import CommunityNav from '@/components/community/CommunityNav.vue'
 
 const title = ref(null)
 const content = ref(null)
@@ -38,7 +42,7 @@ const router = useRouter()
 const createArticle = function () {
   axios({
     method: 'post',
-    url: `${store.API_URL}/community/${community_pk.value}/articles/${0}/`,
+    url: `${store.API_URL}/community/${community_pk.value}/articles/0/`,
     data: {
       title: title.value,
       content: content.value,
@@ -49,7 +53,7 @@ const createArticle = function () {
     }
   })
     .then(() => {
-      router.push({ name: 'CommunityView' })
+      router.push({ name: 'CommunityTotalView' })
     })
     .catch((err) => {
       console.log(err)
@@ -59,5 +63,7 @@ const createArticle = function () {
 </script>
 
 <style scoped>
-
+h2 {
+  margin-top: 100px;  /* header의 높이 */
+}
 </style>

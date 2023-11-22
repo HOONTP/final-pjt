@@ -4,7 +4,7 @@
       <nav>
         <h1>Hoon&Hochul</h1>
         <RouterLink class="nav-link" :to="{ name: 'MovieView' }">영화</RouterLink>
-        <RouterLink class="nav-link" :to="{ name: 'CommunityView' }">커뮤니티</RouterLink>
+        <RouterLink class="nav-link" :to="{ name: 'CommunityTotalView' }">커뮤니티</RouterLink>
 
         <!---------------------- 로그인 한 경우 ---------------------->
         <div v-if="store.isLogin" class="nav-right">
@@ -63,6 +63,7 @@ h1 {
   top: 0;
   left: 0;
   width: 100%;
+  height: 60px;
   background-color: #333;
   padding: 10px 40px;
   z-index: 1000;  /* 다른 요소 위로 올리기 위한 z-index 설정 */
@@ -128,7 +129,7 @@ nav {
 }
 
 .router-view {
-  margin-top: 70px;  /* header의 높이 + 여백 만큼의 여백 추가 */
+  margin-top: 60px;  /* header의 높이 */
 }
 </style>
 
