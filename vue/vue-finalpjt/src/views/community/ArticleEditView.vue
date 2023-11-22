@@ -1,5 +1,8 @@
 <template>
   <div>
+    <!-- Community Nav 바 -->
+    <CommunityNav />
+
     <h1>게시글 수정</h1>
     <form @submit.prevent="updateArticle">
       <div>
@@ -20,6 +23,7 @@ import axios from 'axios'
 import { ref, onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRouter, useRoute } from 'vue-router'
+import CommunityNav from '@/components/community/CommunityNav.vue'
 
 const title = ref('')
 const content = ref('')
