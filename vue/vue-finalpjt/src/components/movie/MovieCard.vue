@@ -9,7 +9,7 @@
         />
         <img
         v-else
-        src="placeholder_image_url"
+        src=""
         alt="No Poster Available"
         class="movie-poster"
         />

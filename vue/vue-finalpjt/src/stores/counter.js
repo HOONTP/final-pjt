@@ -34,6 +34,8 @@ export const useCounterStore = defineStore('counter', () => {
   // Profile
   const profile = ref([])
   
+  // Search
+  const searched_data = ref([])
   
   // 회원가입
   const signUp = function (payload) {
@@ -91,12 +93,13 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   // 게시판 종류 별/작성자 별 게시글 목록 조회
-  const getArticles = function (community_pk=0, user_pk=0) {
+  const getArticles = function (page=0, community_pk=0, user_pk=0) {
     axios({
       method: 'get',
       url: `${API_URL}/community/${community_pk}/articles/${user_pk}/`,
       headers: {
-        Authorization: `Token ${token.value}`
+        Authorization: `Token ${token.value}`,
+        page: page
       }
     })
       .then((res) =>{
@@ -235,6 +238,23 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  const searchTool = function (where, keyword) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/${where}/search/`,
+      headers: {
+        Authorization: `Token ${token.value}`,
+        keyword: keyword,
+      }
+    })
+      .then((res) => {
+        searched_data.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   // 특정 프로필 조회
   const getProfile = function (user_pk) {
     axios({
@@ -271,5 +291,9 @@ export const useCounterStore = defineStore('counter', () => {
     // Profile
     getProfile, 
     profile,
+
+    // Search
+    searchTool,
+    searched_data,
   }
 }, { persist: true })

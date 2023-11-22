@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, get_list_or_404
-
-
+from django.db.models import Q, Count
+from django.http import JsonResponse
 
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -22,6 +22,7 @@ def article(request, community_pk=0, user_pk=0):
             articles = get_list_or_404(Article, board=community_pk)
         else:
             articles = get_list_or_404(Article, user=user_pk)
+        articles = articles.order_by('-is_notice', '-created_at')
         serializer = ArticleListSerializer(articles, many=True, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -44,13 +45,14 @@ def article_detail(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'GET':
         print(article)
+        article.increment_views()  # 조회 수 증가
         serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
         
     elif request.method == 'DELETE':
         print(article.user, request.user)
         if article.user == request.user:
-            article.delete()
+            article.is_active = False
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -66,7 +68,7 @@ def article_detail(request, article_pk):
 @permission_classes([IsAuthenticated])
 def comment_detail(request, article_pk, comment_pk=0):
     if request.method == 'GET':
-        comments = get_list_or_404(Comment, user=request.user)
+        comments = get_list_or_404(Comment.objects.order_by('-created_at'), user=request.user)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     article = get_object_or_404(Article, pk=article_pk)
@@ -80,7 +82,7 @@ def comment_detail(request, article_pk, comment_pk=0):
         comment = get_object_or_404(Comment, pk=comment_pk)
         if request.method == 'DELETE':
             # if Review.user == request.user:
-            comment.delete()
+            comment.is_active = False
             return Response(status=status.HTTP_204_NO_CONTENT)
         elif request.method == 'PUT':
             serializer = CommentSerializer(comment, data=request.data)
@@ -92,7 +94,7 @@ def comment_detail(request, article_pk, comment_pk=0):
 @permission_classes([IsAuthenticated])
 def reply_detail(request, comment_pk, reply_pk=0):
     if request.method == 'GET':
-        replys = get_list_or_404(Reply, user=request.user)
+        replys = get_list_or_404(Reply.objects.order_by('-created_at'), user=request.user)
         serializer = ReplySerializer(replys, many=True)
         return Response(serializer.data)
     comment = get_object_or_404(Comment, pk=comment_pk)
@@ -106,7 +108,7 @@ def reply_detail(request, comment_pk, reply_pk=0):
         reply = get_object_or_404(Reply, pk=reply_pk)
         if request.method == 'DELETE':
             # if Review.user == request.user:
-            reply.delete()
+            reply.is_active = False
             return Response(status=status.HTTP_204_NO_CONTENT)
         elif request.method == 'PUT':
             serializer = ReplySerializer(reply, data=request.data)
@@ -153,4 +155,40 @@ def like_reply(request, reply_pk):
         reply.like_users.add(request.user)
     reply.save()
     serializer = ReplySerializer(reply)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def search_article(request, comment_pk):
+    keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    searched_articles = search_articles(keyword)
+    if searched_articles:
+        searched_articles.order_by("-created_at")
+        serializer = ArticleListSerializer(searched_articles, many=True, partial=True)
+        return Response(serializer.data)
+    else:
+        return JsonResponse({'message': '검색 결과가 없습니다.'})
+
+
+def search_articles(keyword):
+    # Q 객체를 사용하여 title, content, username 중 하나라도 keyword를 포함하는 경우 검색
+    articles = Article.objects.filter(
+        Q(title__icontains=keyword) |
+        Q(content__icontains=keyword) |
+        Q(user__nickname__icontains=keyword)
+    ).distinct()  # 중복된 결과 방지
+    return articles
+
+
+@api_view(['GET'])
+@authentication_classes([])
+def hot_article(request):
+    filtered_articles = Article.objects.annotate(
+        like_users_count=Count('like_users'),
+        comments_count=Count('comments')
+    ).filter(
+        Q(like_users_count__gte=5) | Q(comments_count__gte=5)
+    )
+    filtered_articles.objects.order_by('-created_at')
+    serializer = ArticleListSerializer(filtered_articles[:10], many=True)
     return Response(serializer.data)
