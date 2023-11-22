@@ -28,7 +28,8 @@ export const useCounterStore = defineStore('counter', () => {
   const movies = ref([])
   const movie = ref([])
   const recommendmovies = ref([])
-  const LikedMovies = ref([false])
+  const LikedMovies = ref([])
+  const movieReviews = ref([])
 
   // Profile
   const profile = ref([])
@@ -216,6 +217,24 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  // 영화 리뷰 조회
+  const getMovieReview = function (movieId) {
+    axios({
+      method: 'get',
+      url: `${API_URL}/reviews/${movieId}/`,
+      headers: {
+        // Authorization: `Token ${token.value}`
+        movie: movieId
+      }
+    })
+      .then((res) =>{
+        movieReviews.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
   // 특정 프로필 조회
   const getProfile = function (user_pk) {
     axios({
@@ -246,8 +265,8 @@ export const useCounterStore = defineStore('counter', () => {
     articles, article, LikedArticles,
 
     // Movie
-    getMovies, getMovie, getRecommendMovie, likeMovie,
-    movies, movie, recommendmovies, LikedMovies,
+    getMovies, getMovie, getRecommendMovie, likeMovie, getMovieReview,
+    movies, movie, recommendmovies, LikedMovies, movieReviews,
 
     // Profile
     getProfile, 

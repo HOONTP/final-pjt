@@ -1,10 +1,17 @@
 <template>
+  {{ store.profile }}
   <div id="profile-container">
     <div id="profile-picture">
       <p>[프로필 사진]</p>
     </div>
     <div id="profile-info">
       <h1>{{ store.profile.data.nickname }}</h1>
+      <button v-if="store.currentUser.user_id == props.user_pk">프로필 수정</button>
+      <button 
+        v-else
+        @click="toggleFollow(props.user_pk)">
+        팔로우 {{ isFollowing ? '취소' : '하기' }}
+      </button>
       <hr>
       <p>[한 줄 자기소개]</p>
       <br>
@@ -31,19 +38,52 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import axios from 'axios'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
 const store = useCounterStore()
+const route = useRoute()
 const props = defineProps(['user_pk'])
 
-onMounted(() => {
-  // 특정 유저의 프로필 데이터 가져오기
-  store.getProfile(user_pk)
-    .catch((err) => {
-      console.error(err)
-    })
+const isFollowing = computed(() => {
+  // 현재 로그인한 사용자의 pk 값
+  const currentUserPk = store.currentUser.user_id
+
+  // 현재 프로필 유저를 팔로잉한 사람들의 pk 배열
+  const followersPks = store.profile.data?.followers || []
+
+  // 현재 로그인한 사용자의 pk가 팔로잉한 사람들의 pk 배열에 포함되어 있는지 확인
+  return followersPks.includes(currentUserPk)
 })
+
+onMounted(async () => {
+  // 특정 유저의 프로필 데이터 가져오기
+  try {
+    await store.getProfile(props.user_pk)
+  } catch (err) {
+    console.error(err)
+  }
+})
+
+const toggleFollow = (userId) => {
+  // 팔로우 하기/취소 요청 보내기
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/accounts/${userId}/follow/`,
+    headers: {
+      Authorization: `Token ${store.token}`,
+    },
+  })
+    .then(() => {
+      // 좋아요/좋아요 취소 요청이 성공하면 게시글 데이터를 다시 불러와 갱신
+      store.getArticle(route.params.id)
+    })
+    .catch((err) => {
+      console.error('팔로우 토글 에러:', err)
+    })
+}
 
 </script>
 

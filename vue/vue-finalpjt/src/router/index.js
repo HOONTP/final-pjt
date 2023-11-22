@@ -22,7 +22,6 @@ import MovieDetailView from '@/views/movie/MovieDetailView.vue'
 // Profile
 import ProfileView from '@/views/profile/ProfileView.vue'
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
-import ProfileBookmarkView from '@/views/profile/ProfileBookmarkView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
 import ProfileLikeView from '@/views/profile/ProfileLikeView.vue'
 
@@ -105,11 +104,6 @@ const router = createRouter({
       path: '/profile/:username/article',
       name: 'ProfileArticleView',
       component: ProfileArticleView
-    },
-    {
-      path: '/profile/:username/bookmark',
-      name: 'ProfileBookmarkView',
-      component: ProfileBookmarkView
     },
     {
       path: '/profile/:username/comment',
