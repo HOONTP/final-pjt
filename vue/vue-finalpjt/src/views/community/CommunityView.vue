@@ -1,19 +1,18 @@
 <template>
   <div>
-    <div class="section-buttons">
+    <div class="section-links">
       <div
         v-for="section in articleSections"
         :key="section.routeName"
         @click="changeSection(section)"
-        class="section-button"
+        class="section-link"
       >
         {{ section.label }}
-
       </div>
     </div>
     
     <!-- 현재 선택된 section을 표시 -->
-    <component :is="currentSection.component" />
+    <component :is="currentSection.component" class="current-section"/>
     <RouterLink :to="{ name: 'ArticleCreateView' }">
       글쓰기
     </RouterLink>
@@ -49,20 +48,31 @@ const changeSection = (section) => {
 </script>
 
 <style scoped>
-.section-buttons {
+.section-links {
   display: flex;
-  justify-content: space-evenly;
+  position: fixed;
+  top: 57.2px;
+  left: 0;
+  width: 100%;
+  background-color: rgba(51, 51, 51, 0.8); /* 검정색의 80% 투명도 */
+  padding: 10px 40px;
+  z-index: 1000;
 }
 
-.section-button {
+.section-link {
+  margin-right: 20px;
+  font-size: 14px;
+  color: white;
   cursor: pointer;
-  padding: 10px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  white-space: nowrap;  /* 화면 확대해도 글씨가 줄바꿈 되지 않음 */
+  transition: color 0.3s ease; /* 색상 변경에 애니메이션 효과를 부여함 */
 }
 
-.section-button:hover {
-  background-color: #f0f0f0;
+.section-link:hover {
+  color: #999999; /* 마우스 올리면 색 변경 */
+}
+
+.current-section {
+  margin-top: 100px;
 }
 </style>
