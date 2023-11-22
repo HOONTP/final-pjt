@@ -9,6 +9,10 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
 class ReplySerializer(serializers.ModelSerializer):
     user_nickname = serializers.CharField(source='user.nickname', read_only=True)
+    # class ArticleGetSerializer(serializers.ModelSerializer):
+    #     class Meta:
+    #         model = 
+    article = serializers.PrimaryKeyRelatedField(source='comment.article', read_only=True)
     class Meta:
         model = Reply
         fields = '__all__'
