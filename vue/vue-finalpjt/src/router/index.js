@@ -63,7 +63,8 @@ const router = createRouter({
     {
       path: '/articles/create',
       name: 'ArticleCreateView',
-      component: ArticleCreateView
+      component: ArticleCreateView,
+      props: route => ({ board1: route.params.board1 }) // 이 부분 추가
     },
     {
       path: '/articles/:id',
