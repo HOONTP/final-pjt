@@ -4,12 +4,17 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
 Django==4.2.7
 django-cors-headers==4.3.1
+django-extensions==3.2.3
 djangorestframework==3.14.0
 drf-spectacular==0.26.5
+graphviz==0.20.1
 idna==3.4
 inflection==0.5.1
 jsonschema==4.19.2
 jsonschema-specifications==2023.11.1
+Pillow==10.1.0
+pydotplus==2.0.2
+pyparsing==3.1.1
 python-decouple==3.8
 pytz==2023.3.post1
 PyYAML==6.0.1

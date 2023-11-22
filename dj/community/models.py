@@ -1,11 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from common.models import BaseModel
 
 class Board(models.Model):
     name = models.CharField(max_length=255)
     
-class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들 수 있나?
+class Article(BaseModel): # 이거 하나로 여러개의 게시판을 만들 수 있나?
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -17,6 +18,13 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
     like_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='like_articles'
     )
+    is_active  = models.BooleanField(default=True)
+    is_notice  = models.BooleanField(default=False)
+    counting = models.PositiveIntegerField(default=0)  # 조회 수 필드 추가
+    def increment_views(self):
+        self.views += 1
+        self.save()
+
     def save(self, *args, **kwargs):
         # 이전 데이터를 가져옵니다.
         try:
@@ -32,7 +40,7 @@ class Article(models.Model): # 이거 하나로 여러개의 게시판을 만들
         super(Article, self).save(*args, **kwargs)
 
 
-class Comment(models.Model):
+class Comment(BaseModel):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
@@ -42,9 +50,10 @@ class Comment(models.Model):
     like_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='like_comments'
         )
+    is_active  = models.BooleanField(default=True)
 
 
-class Reply(models.Model):
+class Reply(BaseModel):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
@@ -56,3 +65,4 @@ class Reply(models.Model):
     like_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='like_replies'
         )
+    is_active  = models.BooleanField(default=True)

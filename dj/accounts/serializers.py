@@ -42,11 +42,11 @@ class UserSerializer(serializers.ModelSerializer):
     like_comments = serializers.SerializerMethodField()
     like_replies = serializers.SerializerMethodField()
     like_movies = serializers.SerializerMethodField()
-    like_Reviews = serializers.SerializerMethodField()
+    like_reviews = serializers.SerializerMethodField()
     user_articles = serializers.SerializerMethodField()
     user_comments = serializers.SerializerMethodField()
     user_replies = serializers.SerializerMethodField()
-    user_Reviews = serializers.SerializerMethodField()
+    user_reviews = serializers.SerializerMethodField()
     followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     
     class Meta:
@@ -57,9 +57,9 @@ class UserSerializer(serializers.ModelSerializer):
     def get_like_objects(self, user, model):
         # 해당 사용자가 좋아요한 객체 리스트를 반환하는 메소드
         return model.objects.filter(like_users=user)
-    
+
     def get_user_objects(self, user, model):
-        return model.objects.filter(user=user)
+        return model.objects.filter(user=user).order_by('-created_at')
 
     def get_like_articles(self, user):
         return ArticleSerializer(self.get_like_objects(user, Article), many=True).data
@@ -73,7 +73,7 @@ class UserSerializer(serializers.ModelSerializer):
     def get_like_movies(self, user):
         return MovieSerializer(self.get_like_objects(user, Movie), many=True).data
 
-    def get_like_Reviews(self, user):
+    def get_like_reviews(self, user):
         return ReviewSerializer(self.get_like_objects(user, Review), many=True).data
 
     def get_user_articles(self, user):
@@ -85,5 +85,5 @@ class UserSerializer(serializers.ModelSerializer):
     def get_user_replies(self, user):
         return ReplySerializer(self.get_user_objects(user, Reply), many=True).data
 
-    def get_user_Reviews(self, user):
+    def get_user_reviews(self, user):
         return ReviewSerializer(self.get_user_objects(user, Review), many=True).data

@@ -11,7 +11,9 @@ from django.contrib.auth import authenticate
 from django.http import JsonResponse
 
 from .serializers import UserSerializer
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -21,6 +23,22 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.authtoken.models import Token
 from movies.models import Movie, Director, Genre
 from movies.serializers import MovieListSerializer
+
+
+class ProfileImageView(APIView):
+    parser_classes = (FileUploadParser,)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        profile_image = request.data.get('profile_image')
+
+        if profile_image:
+            user.profile_image = profile_image
+            user.save()
+
+            return Response({'message': 'Profile image uploaded successfully'})
+        else:
+            return Response({'message': 'No image provided'}, status=400)
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @authentication_classes([])
