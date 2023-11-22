@@ -7,8 +7,8 @@
 
     <!-- 리뷰 작성 폼 -->
     <div>
-      <label for="comment">리뷰 작성:</label>
-      <textarea v-model.trim="newReview" id="comment"></textarea>
+      <label for="review">리뷰 작성:</label>
+      <textarea v-model.trim="newReview" id="review"></textarea>
       <button @click="createReview">등록</button>
     </div>
   </div>
