@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework import status
 
-
 from .models import Article, Comment, Reply, Board
 from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, ReplySerializer
 # from .forms import ReviewForm, CommentForm
@@ -158,8 +157,9 @@ def like_reply(request, reply_pk):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def search_article(request, comment_pk):
+@authentication_classes([])
+# @permission_classes([IsAuthenticated])
+def search_article(request, community_pk):
     keyword = request.headers.get('keyword') # headers의 정보 받는 방법
     searched_articles = search_articles(keyword)
     if searched_articles:

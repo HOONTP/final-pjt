@@ -25,6 +25,12 @@
             <span v-if="index < store.movie.genres.length - 1">, </span>
           </span>
         </p>
+        <p>
+          <span v-for="(actor, index) in store.movie.actors">
+            {{ actor.name }}
+            <span v-if="index < store.movie.actors.length - 1">, </span>
+          </span>
+        </p>
         <h2>줄거리</h2>
         <p>{{ store.movie.overview }}</p>
         <h2>공식 예고편</h2>

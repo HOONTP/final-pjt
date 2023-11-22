@@ -187,19 +187,20 @@ def recommend_movie(request):#like_movies
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
+# @permission_classes([IsAuthenticated])
 def search_movie(request):
     keyword = request.headers.get('keyword') # headers의 정보 받는 방법
     searched_movies = Movie.objects.filter(
         Q(title__icontains=keyword) |
-        Q(original_title__icontains=keyword)
-        ).distinct()
+        Q(original_title__icontains=keyword) |
+        Q(actor_ids__name__icontains=keyword)
+        ).distinct() # 중복제거
     if searched_movies:
-        serializer = MovieListSerializer(searched_movies, many=True, partial=True)
+        serializer = MovieSerializer(searched_movies, many=True, partial=True)
         return Response(serializer.data)
     else:
         return JsonResponse({'message': '검색 결과가 없습니다.'})
-
 
 '''
 def index(request):
@@ -207,9 +208,6 @@ def index(request):
 이런 식으로하면 게시글이 없을 때 페이지를 키면 => 404 에러가 되버림.
 -> API를 개발할 때 사용하도록,,
 '''
-
-
-
 
 def get_movie_datas(request):
     # 1페이지부터 500페이지까지 (페이지당 20개, 총 10,000개)
@@ -290,7 +288,9 @@ def get_movie_detail(request):
                 actors_id.append(movie['credits']['cast'][i]['id'])
                 actor, created = Actor.objects.get_or_create(
                     id=movie['credits']['cast'][i]['id'],
-                    defaults={'name': movie['credits']['cast'][i]['name']}
+                    name=movie['credits']['cast'][i]['name'],
+                    original_name=['credits']['cast'][i]['original_name'],
+                    profile_path=movie['credits']['cast'][i]['profile_path']
                 )
                 if i == 10:
                     break
@@ -311,21 +311,3 @@ def get_movie_detail(request):
             count += 1
     print(count)
     return JsonResponse({'message': 'people load'})
-
-
-
-
-
-
-# @api_view(['GET'])
-# def actor_list(request):
-#     actors = get_list_or_404(Actor)
-#     # actors = Actor.objects.all()
-#     serializer = ActorSerializer(actors, many=True)
-#     return Response(serializer.data)
-
-# @api_view(['GET'])
-# def actor_detail(request, actor_pk):
-#     actor = get_object_or_404(Actor, pk=actor_pk)
-#     serializer = ActorSerializer(actor)
-#     return Response(serializer.data)
