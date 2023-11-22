@@ -17,6 +17,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReplySerializer(serializers.ModelSerializer):
+    article = serializers.PrimaryKeyRelatedField(source='comment.article', read_only=True)
     class Meta:
         model = Reply
         fields = '__all__'
@@ -34,6 +35,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 #forms.py처럼 두개로 나눠서 해야될까 ??
 class UserSerializer(serializers.ModelSerializer):
+    User = get_user_model()
     password = serializers.CharField(write_only=True)  # 패스워드는 쓰기 전용으로 설정
     password2 = serializers.CharField(write_only=True)
     like_articles = serializers.SerializerMethodField()
@@ -45,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
     user_comments = serializers.SerializerMethodField()
     user_replies = serializers.SerializerMethodField()
     user_Reviews = serializers.SerializerMethodField()
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     
     class Meta:
         model = get_user_model()

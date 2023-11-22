@@ -12,8 +12,11 @@ from .models import CustomUser
 
 class UserAdmin(BaseUserAdmin):
     ordering = ['id']
-    list_display = ['id', 'username', 'email', 'nickname', 'is_active', 'is_staff']
+    list_display = ['id', 'username', 'email', 'nickname', 'is_active', 'is_staff', 'get_followings']
+    def get_followings(self, obj):
+        return ", ".join([following.username for following in obj.followings.all()])
 
+    get_followings.short_description = 'Followings'
     fieldsets = (
         (None, {'fields': ('nickname','username', 'email', 'password')}),
         (_('Personal Info'), {'fields': ('first_name', 'last_name')}),
@@ -24,7 +27,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('nickname', 'username', 'email', 'password1', 'password2', 'is_active', 'is_staff'),
+            'fields': ('nickname', 'username', 'email', 'password1', 'password2', 'is_active', 'is_staff', 'followings'),
         }),
         (_('Personal Info'), {'fields': ('first_name', 'last_name')}),
     )

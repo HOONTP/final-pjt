@@ -28,7 +28,8 @@ export const useCounterStore = defineStore('counter', () => {
   const movies = ref([])
   const movie = ref([])
   const recommendmovies = ref([])
-  const LikedMovies = ref([])
+  const LikedMovies = ref([false])
+
   // Profile
   const profile = ref([])
   
@@ -157,8 +158,8 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
   // 추천 영화 조회
-  const getRecommendMovie = function () {
-    axios({
+  const getRecommendMovie = async function () {
+    await axios({
       method: 'get',
       url: `${API_URL}/movies/recommend/`,
       headers: {
@@ -176,6 +177,8 @@ export const useCounterStore = defineStore('counter', () => {
   // 영화 좋아요 목록 감시 => 추천 영화 업데이트
   watch(LikedMovies, (newValue, oldValue) => {
     getRecommendMovie()
+    console.log(newValue, 'new')
+    console.log(oldValue, 'old')
   })
 
   // 영화 좋아요 및 취소
@@ -189,12 +192,12 @@ export const useCounterStore = defineStore('counter', () => {
   })
     .then((res) => {
       LikedMovies.value = res.data
+      getMovie(movie_pk)
     })
     .catch((err) => {
       console.log(err)
     })
   }
-
 
   // 단일 영화 조회
   const getMovie = function (id) {
