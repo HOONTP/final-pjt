@@ -1,15 +1,19 @@
 from rest_framework import serializers
-from .models import Movie, Review, Genre
+from .models import Movie, Review, Genre, Actor
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = '__all__'
 
+class ActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Actor
+        fields = '__all__'
+
 class MovieListSerializer(serializers.ModelSerializer):
     genre_ids = GenreSerializer(many=True, read_only=True)
-    genres = GenreSerializer(many=True, read_only=True, source='genre_ids')
-
+    # genres = GenreSerializer(many=True, read_only=True, source='genre_ids')
     class Meta:
         model = Movie
         fields = '__all__'
@@ -32,7 +36,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True, source='movie_reviews')
     review_count = serializers.IntegerField(source='movie_reviews.count', read_only=True)
-    genres = GenreSerializer(many=True, read_only=True, source='genre_ids')
+    # genres = GenreSerializer(many=True, read_only=True, source='genre_ids')
+    actors = ActorSerializer(many=True, read_only=True, source='actor_ids')
     # source로 참조될 데이터를 줘야 serializer할 때에 해당 필드에서 적합한 데이터를 가져옴.
     class Meta:
         model = Movie

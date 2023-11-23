@@ -30,6 +30,7 @@ const store = useCounterStore()
 onMounted(() => {
   // 게시글 데이터 가져오기
   store.getArticles(1)
+  store.now_gps = 'community'
 })
 
 </script>

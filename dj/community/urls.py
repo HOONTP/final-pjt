@@ -15,7 +15,7 @@ urlpatterns = [
     path('like/comment/<int:comment_pk>/', views.like_comment),
     path('like/reply/<int:reply_pk>/', views.like_reply),
     # 검색
-    path('search/<int:comment_pk>/', views.search_article), # GET 게시글 검색(제목 내용 닉네임)
+    path('search/<int:community_pk>/', views.search_article), # GET 게시글 검색(제목 내용 닉네임)
     # 인기글
     path('hot/', views.hot_article),
 ]

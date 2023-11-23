@@ -10,7 +10,7 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from django.conf import settings
@@ -45,7 +45,7 @@ def movie_list(request, user_pk=0):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
-@authentication_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
 
@@ -66,13 +66,14 @@ def movie_detail(request, movie_pk):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def review_list(request, user_pk=2):
     reviews = get_list_or_404(Review, pk=user_pk)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def review_detail(request, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'GET':
@@ -92,6 +93,7 @@ def review_detail(request, review_pk):
     elif request.method == 'DELETE':
         if Review.user == request.user:
             review.is_active = False
+            review.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -187,19 +189,22 @@ def recommend_movie(request):#like_movies
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@authentication_classes([])
+# @permission_classes([IsAuthenticated])
 def search_movie(request):
-    keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    # keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    keyword = request.GET.get('keyword', '')
+    print(keyword)
     searched_movies = Movie.objects.filter(
         Q(title__icontains=keyword) |
-        Q(original_title__icontains=keyword)
-        ).distinct()
+        Q(original_title__icontains=keyword) |
+        Q(actor_ids__name__icontains=keyword)
+        ).distinct().order_by('-popularity') # 중복제거
     if searched_movies:
-        serializer = MovieListSerializer(searched_movies, many=True, partial=True)
+        serializer = MovieSerializer(searched_movies[:20], many=True, partial=True)
         return Response(serializer.data)
     else:
         return JsonResponse({'message': '검색 결과가 없습니다.'})
-
 
 '''
 def index(request):
@@ -207,9 +212,6 @@ def index(request):
 이런 식으로하면 게시글이 없을 때 페이지를 키면 => 404 에러가 되버림.
 -> API를 개발할 때 사용하도록,,
 '''
-
-
-
 
 def get_movie_datas(request):
     # 1페이지부터 500페이지까지 (페이지당 20개, 총 10,000개)
@@ -288,10 +290,23 @@ def get_movie_detail(request):
             actors_id = []
             for i in range(len(movie['credits']['cast'])):
                 actors_id.append(movie['credits']['cast'][i]['id'])
-                actor, created = Actor.objects.get_or_create(
-                    id=movie['credits']['cast'][i]['id'],
-                    defaults={'name': movie['credits']['cast'][i]['name']}
-                )
+                try:
+                    # 이미 존재하는지 확인
+                    actor = Actor.objects.get(id=movie['credits']['cast'][i]['id'])
+                    # 이미 존재한다면 필드 업데이트
+                    actor.name = movie['credits']['cast'][i]['name']
+                    actor.original_name = movie['credits']['cast'][i]['original_name']
+                    actor.profile_path = movie['credits']['cast'][i]['profile_path']
+                    # 저장
+                    actor.save()
+                except Actor.DoesNotExist:
+                    # 존재하지 않으면 새로 생성
+                    actor = Actor.objects.create(
+                        id=movie['credits']['cast'][i]['id'],
+                        name=movie['credits']['cast'][i]['name'],
+                        original_name=movie['credits']['cast'][i]['original_name'],
+                        profile_path=movie['credits']['cast'][i]['profile_path']
+                    )
                 if i == 10:
                     break
             mov.actor_ids.set(actors_id)
@@ -311,21 +326,3 @@ def get_movie_detail(request):
             count += 1
     print(count)
     return JsonResponse({'message': 'people load'})
-
-
-
-
-
-
-# @api_view(['GET'])
-# def actor_list(request):
-#     actors = get_list_or_404(Actor)
-#     # actors = Actor.objects.all()
-#     serializer = ActorSerializer(actors, many=True)
-#     return Response(serializer.data)
-
-# @api_view(['GET'])
-# def actor_detail(request, actor_pk):
-#     actor = get_object_or_404(Actor, pk=actor_pk)
-#     serializer = ActorSerializer(actor)
-#     return Response(serializer.data)

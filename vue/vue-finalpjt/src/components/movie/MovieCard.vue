@@ -14,8 +14,7 @@
         class="movie-poster"
         />
         <h2 @click="goDetail(props.movie)">{{ props.movie.original_title }}</h2>
-        <p>{{ props.movie.id }}</p>
-        <p>{{ props.movie.overview }}</p>
+        <p>{{ truncateOverview(props.movie.overview, 50) }}</p>
 
     </div>
 </template>
@@ -30,7 +29,14 @@ const props = defineProps({
     movie:Object
 })
 const store = useCounterStore()
+const truncatedOverview = ref('');
 
+const truncateOverview = function (overview, maxLength) {
+      if (overview && overview.length > maxLength) {
+        return overview.slice(0, maxLength) + '...';
+      }
+      return overview;
+    }
 const goDetail = (movieId) => {
   router.push({ name: 'MovieDetailView', params: { id: movieId } });
   store.getMovie(movieId)

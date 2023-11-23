@@ -2,18 +2,31 @@
   <!-- {{ store.profile }} -->
   <div id="profile-container">
     <div id="profile-picture">
-      <p>[프로필 사진]</p>
+      <img
+        v-if="store.profile.data.profile_image"
+        :src="store.profile.data.profile_image"
+        alt="프로필 사진"
+      />
+      <!-- {{ store.profile.data.profile_image }} -->
+      <input type="file" v-if="is_edit && store.currentUser.user_id == props.user_pk" ref="imageInput" @change="handleImageChange" />
     </div>
     <div id="profile-info">
       <h1>{{ store.profile.data.nickname }}</h1>
-      <button v-if="store.currentUser.user_id == props.user_pk">프로필 수정</button>
-      <button 
-        v-else
+      <button v-if="store.currentUser.user_id == props.user_pk && !is_edit" @click="startEditingProfile">프로필 수정</button>
+      <button v-else
+        @click="finishEditingProfile">
+        수정 완료
+      </button>
+      <button
+      v-if="store.currentUser.user_id != props.user_pk"
         @click="toggleFollow(props.user_pk)">
         팔로우 {{ isFollowing ? '취소' : '하기' }}
       </button>
       <hr>
-      <p>[한 줄 자기소개]</p>
+      <div>
+      <p v-if="!is_edit">{{ store.profile.data.introduce }}</p>
+      <textarea v-else v-model="editedBio"></textarea>
+      </div>
       <br>
       <div id="profile-stats">
         <div class="stat">
@@ -39,13 +52,16 @@
 
 <script setup>
 import axios from 'axios'
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
 const store = useCounterStore()
 const route = useRoute()
 const props = defineProps(['user_pk'])
+const is_edit = ref(false)
+const selectedImage = ref(null);
+const editedBio = ref(null)
 
 const isFollowing = computed(() => {
   // 현재 로그인한 사용자의 pk 값
@@ -85,6 +101,51 @@ const toggleFollow = (userId) => {
     })
 }
 
+const startEditingProfile = () => {
+  is_edit.value = true
+  editedBio.value = store.profile.data.introduce || ''
+}
+
+const finishEditingProfile = () => {
+  const formData = new FormData();
+  console.log(selectedImage.value)
+
+  if (selectedImage.value) {
+    formData.append('profile_image', selectedImage.value);
+    console.log(selectedImage.value)
+  }
+  if (editedBio.value) {
+    formData.append('bio', editedBio.value);
+    console.log(editedBio.value)
+
+  }
+
+  axios.post(`${store.API_URL}/accounts/profile-update/`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Token ${store.token}`,
+    },
+  })
+  .then(response => {
+    console.log(response.data);
+    // 수정이 완료되었을 때의 추가 작업 수행
+    is_edit.value = false
+    store.getProfile(props.user_pk)
+  })
+  .catch(error => {
+    console.error(error);
+  });
+};
+const handleImageChange = (event) => {
+  // 선택된 파일을 가져옵니다.
+  const file = event.target.files[0];
+
+  // ref에 선택된 파일을 할당합니다.
+  selectedImage.value = file;
+
+  // 선택된 파일 확인 (콘솔에 출력)
+  console.log(selectedImage.value);
+};
 </script>
 
 <style scoped>
