@@ -8,8 +8,9 @@
       <p>조회</p>
       <p>추천</p>
     </div>
-    
+    <div v-if="articles">
     <ArticleListItem :articles="articles"/>
+    </div>
   </div>
 </template>
 
