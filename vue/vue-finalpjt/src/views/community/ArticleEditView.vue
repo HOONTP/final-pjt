@@ -103,10 +103,9 @@ const updateArticle = function () {
 }
 
 .form-container {
-  width: 50%;
   margin: auto;
-  min-width: 600px; /* 예시로 설정한 최소 너비 */
-  max-width: 800px; /* 예시로 설정한 최대 너비 */
+  min-width: 600px;
+  max-width: 600px;
 }
 
 .form-group {

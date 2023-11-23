@@ -14,6 +14,7 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+
 const articleSections = [
   { id: 1, label: '전체 게시판', routeName: 'CommunityTotalView' },
   { id: 2, label: '인기 게시판', routeName: 'CommunityHotView' },

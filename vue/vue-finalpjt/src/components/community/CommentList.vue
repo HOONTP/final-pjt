@@ -125,7 +125,7 @@ const formatCommentTime = (timestamp) => {
 
 const editCommentReply = (commentId, replyId=0) => {
   // 댓글/답글 수정
-  const updatedContent = prompt('수정하세요:', '')
+  const updatedContent = prompt('뭐라고 수정할건데?', '')
   const url = replyId
     ? `${store.API_URL}/community/comments/${commentId}/${replyId}/`
     : `${store.API_URL}/community/articles/${route.params.id}/${commentId}/`
@@ -153,7 +153,7 @@ const editCommentReply = (commentId, replyId=0) => {
 
 const deleteCommentReply = (commentId, replyId=0) => {
   // 댓글/답글 삭제
-  const confirmDelete = confirm('정말로 삭제하시겠습니까?')
+  const confirmDelete = confirm('진짜 지울거임? 쫄보처럼?')
 
   const url = replyId
     ? `${store.API_URL}/community/comments/${commentId}/${replyId}/`
@@ -184,7 +184,7 @@ const isLiked = (likeUsers, userId) => {
 const toggleLike = (userId, commentId, replyId=0) => {
   // 댓글/답글 좋아요/좋아요 취소 요청 보내기
   if (userId === store.currentUser.user_id) {
-    alert('니가 쓴 글인데..? 양심좀')
+    alert('자추는 안되지 아 ㅋㅋ')
     return
   }
 
@@ -243,10 +243,6 @@ const createReply = (commentId) => {
 </script>
 
 <style scoped>
-* {
-  white-space: nowrap;
-}
-
 .comment-info {
   display: flex;
   align-items: center; /* 세로 중앙 정렬을 위해 추가 */
@@ -259,11 +255,12 @@ const createReply = (commentId) => {
 .comment-time {
   margin-left: 8px; /* 작성일과 작성자 사이의 간격 조절 */
   font-size: 0.8em; /* 작성일 폰트 크기 조절 */
+  color:#3498db;
 }
 
 .comment-content {
-  margin-top: 8px; /* content 위쪽 간격 조절 */
-  height: 80px;
+  margin-top: 15px; /* content 위쪽 간격 조절 */
+  min-height: 80px;
 }
 
 .comment-container {

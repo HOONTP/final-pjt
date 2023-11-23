@@ -5,8 +5,7 @@
         v-for="section in profileSections"
         :key="section.routeName"
         @click="changeSection(section)"
-        class="section-button"
-      >
+        class="section-button">
         {{ section.label }}
       </div>
     </div>
@@ -51,15 +50,16 @@ const changeSection = (section) => {
 <style scoped>
 .section-buttons {
   display: flex;
-  justify-content: space-evenly;
 }
 
 .section-button {
+  width: 100px;
   cursor: pointer;
   padding: 10px;
   margin-right: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-bottom: none;
+  text-align: center;
 }
 
 .section-button:hover {

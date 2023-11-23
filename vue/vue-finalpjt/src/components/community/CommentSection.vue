@@ -62,9 +62,8 @@ const createComment = () => {
   display: flex;
   flex-direction: column;
   gap: 20px; /* 댓글과 댓글 작성 폼 간의 간격 */
-  width: 60%;
   min-width: 800px; /* 예시로 설정한 최소 너비 */
-  max-width: 1200px; /* 예시로 설정한 최대 너비 */
+  max-width: 800px; /* 예시로 설정한 최대 너비 */
   margin: auto;
 }
 
@@ -75,6 +74,7 @@ const createComment = () => {
   background-color: #f2f2f2; /* 연한 회색 배경색 */
   padding: 20px; /* 패딩 설정 */
   border-radius: 5px; /* 둥근 테두리 적용*/
+  margin-bottom: 50px;
 }
 
 .comment-area {
