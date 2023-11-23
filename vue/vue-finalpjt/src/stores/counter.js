@@ -23,6 +23,7 @@ export const useCounterStore = defineStore('counter', () => {
   const articles = ref([])
   const article = ref([])
   const LikedArticles = ref([])
+  const hotArticles = ref([])
   
   // Movie
   const movies = ref([])
@@ -35,7 +36,6 @@ export const useCounterStore = defineStore('counter', () => {
   const profile = ref([])
   
   // Search
-  const searched_data = ref([])
   const now_gps = ref()
 
   // 회원가입
@@ -70,7 +70,7 @@ export const useCounterStore = defineStore('counter', () => {
       .then((res) => {
         token.value = res.data.token
         currentUser.value = res.data
-        router.push({ name: 'CommunityView' })
+        router.push({ name: 'MovieView' })
       })
       .catch((err) => {
         console.log(err)
@@ -104,7 +104,6 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) =>{
         articles.value = res.data
-        now_gps.value = 'community'
       })
       .catch((err) => {
         console.log(err)
@@ -132,13 +131,30 @@ export const useCounterStore = defineStore('counter', () => {
   const getLikedArticles = function (user_pk) {
     axios({
       method: 'get',
-      url: `${API_URL}/community/${community_pk}/articles/${user_pk}`,
+      url: `${API_URL}/community/${community_pk}/articles/${user_pk}/`,
       headers: {
         Authorization: `Token ${token.value}`
       }
     })
       .then((res) =>{
         LikedArticles.value = res.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  // 인기글 조회
+  const getHotArticles = function () {
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/hot/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then((res) =>{
+        hotArticles.value = res.data
       })
       .catch((err) => {
         console.log(err)
@@ -157,7 +173,6 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) =>{
         movies.value = res.data
-        now_gps.value = 'movies'
       })
       .catch((err) => {
         console.log(err)
@@ -165,6 +180,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
   // 추천 영화 조회
   const getRecommendMovie = async function () {
+    console.log(currentUser.value)
     await axios({
       method: 'get',
       url: `${API_URL}/movies/recommend/`,
@@ -173,6 +189,7 @@ export const useCounterStore = defineStore('counter', () => {
       }
   })
     .then((res) => {
+      // recommendmovies.value = null
       recommendmovies.value = res.data
     })
     .catch((err) => {
@@ -241,30 +258,52 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   // 검색 기능
-  const searchTool = function (keyword) {
+  const searchMovie = function (keyword) {
+    if (keyword === '') {
+      alert('목숨이 아깝다면 값을 입력하세요.')
+      return
+    }
     axios({
       method: 'get',
-      url: `${API_URL}/${now_gps.value}/search/?keyword=${keyword}`,
+      url: `${API_URL}/movies/search/?keyword=${keyword}`,
       headers: {
         Authorization: `Token ${token.value}`,
         'content-type': 'application/json;charset=UTF-8',
       }
     })
       .then((res) => {
-        if (now_gps.value === 'movies') {
-          movies.value = res.data
-          console.log(res.data)
-        } else if (now_gps.value === 'community') {
-          articles.value = res.data
-        }
+        movies.value = res.data
+        console.log(res.data)
       })
       .catch((err) => {
         console.log(err)
-        console.log(now_gps)
-        console.log(now_gps.value)
+        console.log(movies)
+        alert('검색 결과가 없습니다.')
       })
   }
-
+  const searchArticle = function (keyword) {
+    if (keyword === '') {
+      alert('목숨이 아깝다면 값을 입력하세요.')
+      return
+    }
+    axios({
+      method: 'get',
+      url: `${API_URL}/community/search/${articles.value[0].board}/?keyword=${keyword}`,
+      headers: {
+        Authorization: `Token ${token.value}`,
+        'content-type': 'application/json;charset=UTF-8',
+      }
+    })
+      .then((res) => {
+        articles.value = res.data
+        console.log(res.data)
+      })
+      .catch((err) => {
+        console.log(err)
+        console.log(articles)
+        alert('검색 결과가 없습니다.')
+      })
+  }
   // 특정 프로필 조회
   const getProfile = function (user_pk) {
     axios({
@@ -291,8 +330,8 @@ export const useCounterStore = defineStore('counter', () => {
     token, currentUser, isLogin,
 
     // Community
-    getArticles, getArticle, getLikedArticles,
-    articles, article, LikedArticles,
+    getArticles, getArticle, getLikedArticles, getHotArticles,
+    articles, article, LikedArticles, hotArticles,
 
     // Movie
     getMovies, getMovie, getRecommendMovie, likeMovie, getMovieReview,
@@ -303,7 +342,6 @@ export const useCounterStore = defineStore('counter', () => {
     profile,
 
     // Search
-    searchTool,
-    searched_data,
+    searchMovie, searchArticle,
   }
 }, { persist: true })

@@ -65,7 +65,7 @@ def article_detail(request, article_pk):
 
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def comment_detail(request, article_pk, comment_pk=0):
     if request.method == 'GET':
         comments = get_list_or_404(Comment.objects.order_by('-created_at'), user=request.user)
@@ -92,7 +92,7 @@ def comment_detail(request, article_pk, comment_pk=0):
                 return Response(serializer.data)
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def reply_detail(request, comment_pk, reply_pk=0):
     if request.method == 'GET':
         replys = get_list_or_404(Reply.objects.order_by('-created_at'), user=request.user)
@@ -161,38 +161,38 @@ def like_reply(request, reply_pk):
 
 @api_view(['GET'])
 @authentication_classes([])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def search_article(request, community_pk):
     # keyword = request.headers.get('keyword') # headers의 정보 받는 방법
     keyword = request.GET.get('keyword', '')
-    searched_articles = search_articles(keyword)
+    searched_articles = search_articles(keyword, community_pk)
     if searched_articles:
         searched_articles
         serializer = ArticleListSerializer(searched_articles, many=True, partial=True)
         return Response(serializer.data)
     else:
-        return JsonResponse({'message': '검색 결과가 없습니다.'})
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-def search_articles(keyword):
+def search_articles(keyword, community_pk):
     # Q 객체를 사용하여 title, content, username 중 하나라도 keyword를 포함하는 경우 검색
     articles = Article.objects.filter(
         Q(title__icontains=keyword) |
         Q(content__icontains=keyword) |
         Q(user__nickname__icontains=keyword)
-    ).distinct().order_by("-created_at")  # 중복된 결과 방지
+    ).filter(board=community_pk).distinct().order_by("-created_at")  # 중복된 결과 방지
     return articles
 
 
 @api_view(['GET'])
 @authentication_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def hot_article(request):
     filtered_articles = Article.objects.annotate(
         like_users_count=Count('like_users'),
         comments_count=Count('comments')
     ).filter(
         Q(like_users_count__gte=5) | Q(comments_count__gte=5)
-    )
-    filtered_articles.objects.order_by('-created_at')
+    ).order_by('-created_at')
     serializer = ArticleListSerializer(filtered_articles[:10], many=True)
     return Response(serializer.data)

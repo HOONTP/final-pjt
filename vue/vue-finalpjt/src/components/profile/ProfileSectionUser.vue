@@ -2,11 +2,12 @@
   <div id="profile-container">
     <div id="profile-picture">
       <img
-        v-if="store.profile.data.profile_image"
-        :src="store.profile.data.profile_image"
+        v-if="store.profile.data.profile_image && !is_edit"
+        :src="store.API_URL+store.profile.data.profile_image"
         alt="프로필 사진"
         class="profile-image"
       />
+      <!-- {{ store.API_URL+store.profile.data.profile_image }} -->
       <input type="file" v-if="is_edit && store.currentUser.user_id == props.user_pk" ref="imageInput" @change="handleImageChange" />
     </div>
     <div id="profile-info">

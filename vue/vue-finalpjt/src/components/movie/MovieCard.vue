@@ -15,7 +15,6 @@
         />
         <h2 @click="goDetail(props.movie)">{{ props.movie.original_title }}</h2>
         <p>{{ truncateOverview(props.movie.overview, 50) }}</p>
-
     </div>
 </template>
 

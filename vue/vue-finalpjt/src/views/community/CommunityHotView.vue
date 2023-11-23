@@ -15,6 +15,9 @@
 
       <ArticleList :articles="store.articles" />
     </div>
+    <div>
+      <SearchArticle />
+    </div>
   </div>
 </template>
 
@@ -24,6 +27,7 @@ import { RouterLink } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 import ArticleList from '@/components/community/ArticleList.vue'
 import CommunityNav from '@/components/community/CommunityNav.vue'
+import SearchArticle from '../../components/commons/SearchArticle.vue'
 
 const store = useCounterStore()
 
