@@ -4,7 +4,7 @@
     <CommunityNav />
     
     <div class="container">
-      <div class="detail">
+      <div class="detail" v-if="store.article">
         <h2>{{ getBoardType(store.article.board) }} 게시판</h2>
 
         <div v-if="store.article">

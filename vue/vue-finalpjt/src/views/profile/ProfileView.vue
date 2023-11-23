@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="store.profile.data">
     <ProfileSectionUser :user_pk="user_pk" />
     <hr class="hr">
     <ProfileSectionContent

@@ -1,5 +1,5 @@
 <template>
-    <div class="movie-details">
+    <div v-if="store.movie" class="movie-details">
       <img
         v-if="store.movie && store.movie.poster_path"
         :src="'https://image.tmdb.org/t/p/w500/' + store.movie.poster_path"

@@ -12,6 +12,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, get_list_or_404
+from rest_framework.authentication import TokenAuthentication
 
 from django.conf import settings
 import requests
@@ -45,7 +46,7 @@ def movie_list(request, user_pk=0):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-@api_view(['GET', 'DELETE', 'PUT'])
+@api_view(['GET', 'PUT'])
 @authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def movie_detail(request, movie_pk):
@@ -53,13 +54,7 @@ def movie_detail(request, movie_pk):
 
     if request.method == 'GET':
         serializer = MovieSerializer(movie)
-        return Response(serializer.data)       
-        
-    elif request.method == 'DELETE':
-        # if movie.user == request.user:
-        movie.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-        
+        return Response(serializer.data)
     elif request.method == 'PUT':
         serializer = MovieSerializer(movie, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
@@ -70,13 +65,12 @@ def movie_detail(request, movie_pk):
 @api_view(['GET'])
 @authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
-def review_list(request, user_pk=2):
+def review_list(request, user_pk=0):
     reviews = get_list_or_404(Review, pk=user_pk)
     serializer = ReviewSerializer(reviews, many=True)
     return Response(serializer.data)
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def review_detail(request, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
@@ -120,7 +114,7 @@ def create_review(request, movie_pk):
 # 좋아요는 POST 기능,,
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def add_user_to_movie_likes(request, movie_pk):
     # POST 요청의 본문에서 영화 ID와 사용자 ID를 가져옴
     # Postman에서 user정보를 어케하지
