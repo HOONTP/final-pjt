@@ -70,8 +70,9 @@ const createArticle = function () {
       Authorization: `Token ${store.token}`
     }
   })
-    .then(() => {
-      router.go(-1)
+    .then((response) => {
+      const createdArticleId = response.data.id
+      router.push({ name: 'ArticleDetailView', params: { id: createdArticleId } })
     })
     .catch((err) => {
       console.log(err)

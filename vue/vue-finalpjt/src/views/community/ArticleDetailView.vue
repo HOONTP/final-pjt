@@ -11,19 +11,32 @@
           <h1>{{ store.article.title }}</h1>
 
           <div class="article_info">
-            <div class="profile_img">
-              <p>[프로필 사진]</p>
+            <div class="profile-picture">
+              <img
+                v-if="store.profile.data.profile_image && !is_edit"
+                :src="store.API_URL+store.profile.data.profile_image"
+                alt="프로필 사진"
+                class="profile-image"
+                @click="navigateToProfile(store.article.user)"
+              />
             </div>
             <div class="user_info">
-              <h4>{{ store.article.user_nickname }}</h4>
-              <p class="timestamp">
-                작성일: {{ formatDateTime(store.article.created_at) }} 
-                <span class="time-ago">{{ formatTimestamp(store.article.created_at) }}</span>
-              </p>
-              <p class="timestamp">
-                수정일: {{ formatDateTime(store.article.updated_at) }} 
-                <span class="time-ago">{{ formatTimestamp(store.article.updated_at) }}</span>
-              </p>
+              <div class="info-top">
+                <p @click="navigateToProfile(store.article.user)" class="nickname">
+                  {{ store.article.user_nickname }}
+                </p>
+                <p>조회수: {{ store.article.counting }}</p>
+              </div>
+              <div>
+                <p class="timestamp">
+                  작성일: {{ formatDateTime(store.article.created_at) }} 
+                  <span class="time-ago">{{ formatTimestamp(store.article.created_at) }}</span>
+                </p>
+                <p class="timestamp">
+                  수정일: {{ formatDateTime(store.article.updated_at) }} 
+                  <span class="time-ago">{{ formatTimestamp(store.article.updated_at) }}</span>
+                </p>
+              </div>
             </div>
           </div>
 
@@ -62,9 +75,9 @@
           </p>
         </div>
       </div>
-
+      
       <!-- 댓글 section 컴포넌트 -->
-      <CommentSection />
+        <CommentSection />
     </div>
   </div>
 </template>
@@ -82,12 +95,22 @@ const store = useCounterStore()
 const route = useRoute()
 const router = useRouter()
 
-onMounted(() => {
+onMounted(async() => {
   // 게시글 데이터 가져오기
   if (route) {
   store.getArticle(route.params.id)
   }
+
+  try {
+    await store.getProfile(store.article.user)
+  } catch (err) {
+    console.error(err)
+  }
 })
+
+const navigateToProfile = (userId) => {
+  router.push({ name: 'ProfileView', params: { nickName: userId } })
+}
 
 const formatDateTime = (timestamp) => {
   const createdDate = new Date(timestamp)
@@ -194,6 +217,26 @@ const getBoardType = (board) => {
   margin-top: 120px;
 }
 
+.profile-picture {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  padding: 10px; /* 내부 여백 */
+  border-radius: 5px; /* 둥근 테두리 적용 */
+  margin-right: 10px; /* 프로필 사진과 사용자 정보 사이 간격 조절 */
+  overflow: hidden;
+}
+
+.profile-image {
+  /* width: 100%; */
+  width: auto;
+  height: 100%;
+  border-radius: 50%; /* 원형 프로필 이미지를 위해 반지름 50% 설정 */
+  cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
+}
+
 .detail {
   min-width: 800px; /* 예시로 설정한 최소 너비 */
   max-width: 800px; /* 예시로 설정한 최대 너비 */
@@ -212,23 +255,28 @@ const getBoardType = (board) => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.profile_img {
-  background-color: #d9d9d9; /* 프로필 사진 배경색 */
-  padding: 10px; /* 내부 여백 */
-  border-radius: 5px; /* 둥근 테두리 적용 */
-  margin-right: 10px; /* 프로필 사진과 사용자 정보 사이 간격 조절 */
-}
 h2 {
   margin-bottom: 30px;
 }
 
-h4 {
+.nickname {
+  font-weight: bold;
+  font-size: 30px;
   margin-bottom: 10px;
+  cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
 }
 
 .user_info {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.info-top {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 50px;
 }
 
 .timestamp {
