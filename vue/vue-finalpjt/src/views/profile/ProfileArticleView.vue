@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h3>작성한 게시글</h3>
+  <div class="container">
     <ProfileArticleItem 
       v-for="article in store.profile.data.user_articles"
       :key="article.id"
@@ -27,3 +26,9 @@ onMounted(async () => {
 })
 
 </script>
+
+<style scoped>
+.container {
+  margin-bottom: 50px;
+}
+</style>

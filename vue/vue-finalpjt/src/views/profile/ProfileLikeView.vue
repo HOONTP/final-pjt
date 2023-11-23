@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div class="like-container">
+    <div class="container">
       <h3>좋아요 한 게시글</h3>
       <ProfileArticleItem 
         v-for="article in store.profile.data.like_articles"
@@ -9,7 +9,7 @@
       />
     </div>
 
-    <div>
+    <div class="container">
       <h3>좋아요 한 댓글</h3>
       <!-- 댓글 목록 -->
       <ProfileCommentItem 
@@ -26,7 +26,7 @@
       />
     </div>
 
-    <div>
+    <div class="container">
       <h3>좋아요 한 영화</h3>
       <ProfileMovieItemLiked 
         v-for="movie in store.profile.data.like_movies"
@@ -35,7 +35,7 @@
       />
     </div>
 
-    <div>
+    <div class="container">
       <h3>좋아요 한 리뷰</h3>
     </div>
 
@@ -65,4 +65,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.like-container{
+  margin-bottom:50px;
+}
+.container {
+  margin-top: 30px;
+}
 </style>

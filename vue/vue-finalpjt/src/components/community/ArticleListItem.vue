@@ -7,7 +7,7 @@
           <RouterLink
             :to="{ name: 'ArticleDetailView', params: { id: article.id }}"
             class="title">
-            {{ article.title }}
+            {{ truncateTitle(article.title, 30) }}
           </RouterLink>
           <p class="comment">{{ getCommentsLength(article) }}</p>
         </div>
@@ -55,6 +55,14 @@ const getCommentsLength = (article) => {
 const getLikeUsersLength = (article) => {
   // article.like_users가 정의되지 않았을 때를 고려하여 길이를 가져오는 함수
   return article.like_users ? article.like_users.length : 0;
+}
+
+const truncateTitle = (title, maxLength) => {
+  if (title.length <= maxLength) {
+    return title;
+  } else {
+    return title.slice(0, maxLength) + '...';
+  }
 }
 
 </script>

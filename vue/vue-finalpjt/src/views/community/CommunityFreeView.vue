@@ -39,12 +39,10 @@ onMounted(() => {
 }
 
 .container {
-  margin: 0 5%;
   margin: auto;
   margin-top: 120px;
-  width: 80%;
-  min-width: 800px; /* 예시로 설정한 최소 너비 */
-  max-width: 1200px; /* 예시로 설정한 최대 너비 */
+  min-width: 800px;
+  max-width: 800px;
 }
 
 .header {

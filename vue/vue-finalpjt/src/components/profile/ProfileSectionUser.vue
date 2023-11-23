@@ -1,48 +1,52 @@
 <template>
-  <!-- {{ store.profile }} -->
   <div id="profile-container">
     <div id="profile-picture">
       <img
         v-if="store.profile.data.profile_image"
         :src="store.profile.data.profile_image"
         alt="프로필 사진"
+        class="profile-image"
       />
-      <!-- {{ store.profile.data.profile_image }} -->
       <input type="file" v-if="is_edit && store.currentUser.user_id == props.user_pk" ref="imageInput" @change="handleImageChange" />
     </div>
     <div id="profile-info">
-      <h1>{{ store.profile.data.nickname }}</h1>
-      <button v-if="store.currentUser.user_id == props.user_pk && !is_edit" @click="startEditingProfile">프로필 수정</button>
-      <button v-else
-        @click="finishEditingProfile">
-        수정 완료
-      </button>
-      <button
-      v-if="store.currentUser.user_id != props.user_pk"
-        @click="toggleFollow(props.user_pk)">
-        팔로우 {{ isFollowing ? '취소' : '하기' }}
-      </button>
-      <hr>
+      <div class="profile-header">
+        <h1>{{ store.profile.data.nickname }}</h1>
+        <div class="buttons">
+          <button v-if="store.currentUser.user_id == props.user_pk && !is_edit" @click="startEditingProfile" class="edit-button">프로필 수정</button>
+          <button v-else @click="finishEditingProfile" class="edit-button">수정 완료</button>
+          <button
+            v-if="store.currentUser.user_id != props.user_pk"
+            @click="toggleFollow(props.user_pk)"
+            class="follow-button"
+          >
+            {{ isFollowing ? '팔로우 취소' : '팔로우 하기' }}
+          </button>
+        </div>
+      </div>
+      <hr class="hr">
       <div>
-      <p v-if="!is_edit">{{ store.profile.data.introduce }}</p>
-      <textarea v-else v-model="editedBio"></textarea>
+        <p v-if="!is_edit" class="bio">{{ store.profile.data.introduce }}</p>
+        <textarea v-else v-model="editedBio" class="bio-textarea"></textarea>
       </div>
       <br>
       <div id="profile-stats">
         <div class="stat">
-          <p class="stat-value">[게시글 수]</p>
+          <p class="stat-value">{{ store.profile.data.user_articles.length }}</p>
           <p>게시물</p>
         </div>
         <div class="stat">
-          <p class="stat-value">[댓글 수]</p>
+          <p class="stat-value">
+            {{ store.profile.data.user_comments.length + store.profile.data.user_replies.length }}
+          </p>
           <p>댓글</p>
         </div>
         <div class="stat">
-          <p class="stat-value">[팔로워 수]</p>
+          <p class="stat-value">{{ store.profile.data.followers.length }}</p>
           <p>팔로워</p>
         </div>
         <div class="stat">
-          <p class="stat-value">[팔로잉 수]</p>
+          <p class="stat-value">{{ store.profile.data.followings.length }}</p>
           <p>팔로잉</p>
         </div>
       </div>
@@ -151,6 +155,10 @@ const handleImageChange = (event) => {
 <style scoped>
 #profile-container {
   display: flex;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #profile-picture {
@@ -160,8 +168,58 @@ const handleImageChange = (event) => {
   align-items: center;
 }
 
+.profile-image {
+  width: 100%;
+  max-width: 200px; /* 최대 너비 설정 */
+  border-radius: 50%; /* 원형 프로필 이미지를 위해 반지름 50% 설정 */
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buttons {
+  display: flex;
+}
+
+.edit-button,
+.follow-button {
+  background-color: rgb(76, 181, 249);
+  color: white;
+  margin: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover,
+.submit-button:hover {
+  background-color: rgb(0, 120, 215);
+}
+
+.bio {
+  font-size: 16px;
+  margin-bottom: 10px;
+  height: 100px;
+}
+
+.bio-textarea {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
 #profile-info {
   width: 75%;
+  padding-left: 20px;
 }
 
 #profile-stats {
@@ -175,5 +233,12 @@ const handleImageChange = (event) => {
 
 .stat-value {
   font-weight: bold;
+}
+
+.hr {
+  margin-top: 20px; /* hr 위쪽 여백 설정 */
+  margin-bottom: 20px; /* hr 아래쪽 여백 설정 */
+  border: none; /* 기존 border 제거 */
+  border-top: 1px solid #ddd; /* 새로운 연한 회색 border 추가 */
 }
 </style>

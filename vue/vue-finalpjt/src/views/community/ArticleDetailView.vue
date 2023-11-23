@@ -34,7 +34,7 @@
         <!-- 좋아요 버튼 -->
         <button
           :class="{ 'like-button': true, 'liked': isLiked(store.article.like_users, store.currentUser.user_id) }"
-          @click="toggleLike">
+          @click="toggleLike(store.article.user_nickname)">
           👍
           {{ store.article.like_users ? store.article.like_users.length : 0 }}
         </button>
@@ -55,7 +55,7 @@
           
           <!-- 삭제 버튼 -->
           <p
-            @click="deleteArticle"
+            @click="confirmDelete"
             v-if="store.article"
             class="delete-button">
             삭제하기
@@ -118,8 +118,14 @@ const isLiked = (likeUsers, userId) => {
   return likeUsers && likeUsers.includes(userId)
 }
 
-const toggleLike = () => {
+const toggleLike = (userId) => {
   // 게시글 좋아요/좋아요 취소 요청 보내기
+
+  if (userId === store.currentUser.username) {
+    alert('니가 쓴 글인데..? 양심좀')
+    return
+  }
+
   axios({
     method: 'post',
     url: `${store.API_URL}/community/like/article/${route.params.id}/`,
@@ -134,6 +140,16 @@ const toggleLike = () => {
     .catch((err) => {
       console.error('좋아요 토글 에러:', err)
     })
+}
+
+const confirmDelete = () => {
+  // window.confirm을 사용하여 사용자에게 확인을 받음
+  const isConfirmed = window.confirm('우리의 추억을... 정말 지워버릴거니..?')
+
+  // 확인이면 삭제 수행
+  if (isConfirmed) {
+    deleteArticle()
+  }
 }
 
 const deleteArticle = () => {
@@ -158,29 +174,27 @@ const deleteArticle = () => {
 const getBoardType = (board) => {
   switch (board) {
     case 1:
-      return '전체';
+      return '전체'
     case 2:
-      return '인기';
+      return '인기'
     case 3:
-      return '리뷰';
+      return '리뷰'
     case 4:
-      return '자유';
+      return '자유'
     default:
-      return '';
+      return ''
   }
 }
 </script>
 
 <style scoped>
 .container {
-  margin: 0 5%;
   margin-top: 120px;
 }
 
 .detail {
-  width: 60%;
   min-width: 800px; /* 예시로 설정한 최소 너비 */
-  max-width: 1200px; /* 예시로 설정한 최대 너비 */
+  max-width: 800px; /* 예시로 설정한 최대 너비 */
   margin: auto;
   margin-top: 30px;
   margin-bottom: 20px;
@@ -192,7 +206,8 @@ const getBoardType = (board) => {
   margin-bottom: 20px;
   background-color: #f2f2f2; /* 연한 회색 배경색 */
   padding: 10px; /* 내부 여백 */
-  border-radius: 5px; /* 둥근 테두리 적용*/
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile_img {
@@ -227,7 +242,7 @@ h4 {
   margin-top: 30px;
   margin-bottom: 10px;
   font-size: 1.5em;
-  height: 300px; /* 높이 설정 */
+  min-height: 300px; /* 높이 설정 */
   overflow-y: auto; /* 세로 스크롤 추가 */
 }
 

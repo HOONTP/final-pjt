@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <h3>작성한 댓글</h3>
-
+  <div class="container">
     <!-- 댓글 목록 -->
     <ProfileCommentItem 
       v-for="comment in store.profile.data.user_comments"
@@ -37,3 +35,9 @@ onMounted(async () => {
 })
 
 </script>
+
+<style scoped>
+.container {
+  margin-bottom: 50px;
+}
+</style>
