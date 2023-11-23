@@ -5,6 +5,9 @@ from community.models import Article, Comment, Reply
 from django.contrib.auth import get_user_model
 # from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
+class ProfileUpdateSerializer(serializers.Serializer):
+    profile_image = serializers.ImageField(required=False)
+    bio = serializers.CharField(required=False)  # 자기소개 필드 추가
 
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:

@@ -36,7 +36,8 @@ export const useCounterStore = defineStore('counter', () => {
   
   // Search
   const searched_data = ref([])
-  
+  const now_gps = ref()
+
   // 회원가입
   const signUp = function (payload) {
     const { nickname, username, password, password2 } = payload
@@ -104,6 +105,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) =>{
         articles.value = res.data
+        now_gps.value = 'community'
       })
       .catch((err) => {
         console.log(err)
@@ -156,6 +158,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) =>{
         movies.value = res.data
+        now_gps.value = 'movies'
       })
       .catch((err) => {
         console.log(err)
@@ -238,20 +241,28 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  const searchTool = function (where, keyword) {
+  // 검색 기능
+  const searchTool = function (keyword) {
     axios({
       method: 'get',
-      url: `${API_URL}/${where}/search/`,
+      url: `${API_URL}/${now_gps.value}/search/?keyword=${keyword}`,
       headers: {
         Authorization: `Token ${token.value}`,
-        keyword: keyword,
+        'content-type': 'application/json;charset=UTF-8',
       }
     })
       .then((res) => {
-        searched_data.value = res.data
+        if (now_gps.value === 'movies') {
+          movies.value = res.data
+          console.log(res.data)
+        } else if (now_gps.value === 'community') {
+          articles.value = res.data
+        }
       })
       .catch((err) => {
         console.log(err)
+        console.log(now_gps)
+        console.log(now_gps.value)
       })
   }
 
