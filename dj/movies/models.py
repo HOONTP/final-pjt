@@ -26,9 +26,9 @@ class Genre(models.Model):
 
 class Actor(models.Model):
     id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100)
-    original_name = models.CharField(max_length=100)
-    profile_path = models.CharField(max_length=255)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    original_name = models.CharField(max_length=100, blank=True, null=True)
+    profile_path = models.CharField(max_length=255, blank=True, null=True)
     # image_url = f'https://image.tmdb.org/t/p/original{actor.profile_path}'
 
 class Director(models.Model):

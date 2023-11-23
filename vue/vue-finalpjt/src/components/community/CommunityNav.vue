@@ -8,13 +8,16 @@
           <p class="section-link">{{ section.label }}</p>
         </RouterLink>
       </div>
+      <div>
+        <SearchData />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { RouterLink } from 'vue-router'
-
+import SearchData from '../commons/SearchData.vue';
 const articleSections = [
   { id: 1, label: '전체 게시판', routeName: 'CommunityTotalView' },
   { id: 2, label: '인기 게시판', routeName: 'CommunityHotView' },

@@ -12,12 +12,14 @@
           {{ store.LikedMovies && store.LikedMovies.some(item => item.id === store.movie.id) ? '좋아요 취소' : '좋아요' }}
           {{ store.movie.like_users ? store.movie.like_users.length : 0 }}
         </button>
-        {{ store.movie.like_users }}
         <br>
         <h2>{{ store.movie.original_title }}</h2>
         <p><strong>개봉일:</strong> {{ store.movie.release_date }}</p>
         <p><strong>러닝타임:</strong> {{ store.movie.runtime }} 분</p>
         <p><strong>TMDB 평점:</strong> {{ store.movie.vote_average }}</p>
+        
+        <!-- 나중에 지울것 정보 보기용 -->
+        <p>{{ store.movie }}</p>
         <h2><strong>장르</strong></h2>
         <p>
           <span v-for="(genre, index) in store.movie.genres">
@@ -27,7 +29,8 @@
         </p>
         <p>
           <span v-for="(actor, index) in store.movie.actors">
-            {{ actor.name }}
+            <img v-if="actor.profile_path" :src="getImageUrl(actor.profile_path)" alt="Actor Image" />
+            {{ actor.name || actor.original_name }}
             <span v-if="index < store.movie.actors.length - 1">, </span>
           </span>
         </p>
@@ -75,6 +78,12 @@
     store.likeMovie(movieId)
     store.getMovie(movieId)
   }
+
+  const getImageUrl = (profilePath) => {
+      // 이미지의 URL을 구성하는 로직을 이곳에 작성
+      // 예시 URL: https://image.tmdb.org/t/p/w500/AbCqqFxNi5w3nDUFdQt0DGMFh5H.jpg
+      return `https://image.tmdb.org/t/p/w500/${profilePath}`;
+    }
   </script>
   
   <style scoped>

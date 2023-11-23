@@ -10,7 +10,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProfileUpdateSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
@@ -21,24 +21,39 @@ from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from rest_framework.authtoken.models import Token
-from movies.models import Movie, Director, Genre
-from movies.serializers import MovieListSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class ProfileImageView(APIView):
-    parser_classes = (FileUploadParser,)
+class ProfileUpdateView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        user = request.user
-        profile_image = request.data.get('profile_image')
-
-        if profile_image:
-            user.profile_image = profile_image
-            user.save()
-
-            return Response({'message': 'Profile image uploaded successfully'})
+        serializer = ProfileUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            # 사용자 모델 업데이트
+            request.user.profile_image = serializer.validated_data.get('profile_image', '')
+            request.user.introduce = serializer.validated_data.get('bio', '')
+            request.user.save()
+            return Response({'message': 'Profile updated successfully'})
         else:
-            return Response({'message': 'No image provided'}, status=400)
+            return Response(serializer.errors, status=400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    if request.method == 'POST':
+        bio = request.POST.get('bio', '')
+        
+        # 이미지 파일 처리
+        profile_picture = request.FILES.get('profile_picture', None)
+        if profile_picture:
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_profile.profile_picture = profile_picture
+            user_profile.save()
+
+        return JsonResponse({'message': '프로필이 업데이트되었습니다.'})
+    else:
+        return JsonResponse({'message': 'POST 요청만 허용됩니다.'})
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @authentication_classes([])
@@ -109,14 +124,6 @@ def log(request):
     elif request.method == 'DELETE':
         auth_logout(request)
         return JsonResponse({'message': 'logout success'})
-
-
-# @api_view(['GET'])
-# def profile(request, user_pk):
-#     User = get_user_model()
-#     user = get_object_or_404(User, pk=user_pk)
-#     serializer = UserSerializer(user, partial=True)
-#     return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

@@ -44,7 +44,7 @@ def article_detail(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'GET':
         print(article)
-        article.increment_views()  # 조회 수 증가
+        article.increment_counting()  # 조회 수 증가
         serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
         
@@ -52,6 +52,7 @@ def article_detail(request, article_pk):
         print(article.user, request.user)
         if article.user == request.user:
             article.is_active = False
+            article.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -82,6 +83,7 @@ def comment_detail(request, article_pk, comment_pk=0):
         if request.method == 'DELETE':
             # if Review.user == request.user:
             comment.is_active = False
+            comment.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         elif request.method == 'PUT':
             serializer = CommentSerializer(comment, data=request.data)
@@ -108,6 +110,7 @@ def reply_detail(request, comment_pk, reply_pk=0):
         if request.method == 'DELETE':
             # if Review.user == request.user:
             reply.is_active = False
+            reply.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         elif request.method == 'PUT':
             serializer = ReplySerializer(reply, data=request.data)
@@ -160,10 +163,11 @@ def like_reply(request, reply_pk):
 @authentication_classes([])
 # @permission_classes([IsAuthenticated])
 def search_article(request, community_pk):
-    keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    # keyword = request.headers.get('keyword') # headers의 정보 받는 방법
+    keyword = request.GET.get('keyword', '')
     searched_articles = search_articles(keyword)
     if searched_articles:
-        searched_articles.order_by("-created_at")
+        searched_articles
         serializer = ArticleListSerializer(searched_articles, many=True, partial=True)
         return Response(serializer.data)
     else:
@@ -176,7 +180,7 @@ def search_articles(keyword):
         Q(title__icontains=keyword) |
         Q(content__icontains=keyword) |
         Q(user__nickname__icontains=keyword)
-    ).distinct()  # 중복된 결과 방지
+    ).distinct().order_by("-created_at")  # 중복된 결과 방지
     return articles
 
 

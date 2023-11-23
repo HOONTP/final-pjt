@@ -1,20 +1,28 @@
 <template>
   <div>
+    <h3>검색 기능</h3>
+    <p>
+      <SearchData />
+    </p>
     <div class="movie-container">
-      <div>
+      <!-- 좌측: MovieCard -->
+      <div class="movie-list">
+        <div v-for="movie in store.movies" :key="movie.id" class="movie-box">
+          <MovieCard :movie="movie" />
+        </div>
+      </div>
+
+      <!-- 우측: MovieRecommend -->
+      <div class="recommend-container">
         <MovieRecommend />
       </div>
-      <div v-for="movie in store.movies" :key="movie.id" class="movie-box">
-      <MovieCard
-      :movie="movie"
-      />
-      </div>
     </div>
-    <div>
-      <!-- 좌우 화살표 버튼 -->
-      <button @click="prevPage">이전</button>
+
+    <!-- 페이지 네비게이션 버튼 -->
+    <div class="pagination-container">
+      <button @click="prevPage" class="pagination-button">이전</button>
       <span>{{ page }}</span>
-      <button @click="nextPage">다음</button>
+      <button @click="nextPage" class="pagination-button">다음</button>
     </div>
   </div>
 </template>
@@ -26,6 +34,7 @@ import { useCounterStore } from '@/stores/counter'
 // import axios from 'axios'
 import MovieCard from '@/components/movie/MovieCard.vue'
 import MovieRecommend from '@/components/movie/MovieRecommend.vue'
+import SearchData from '../../components/commons/SearchData.vue'
 const store = useCounterStore()
 const router = useRouter()
 const page = ref(1)
@@ -60,17 +69,11 @@ const scrollToTop = () => {
 <style scoped>
 .movie-container {
   display: flex;
+  justify-content: space-between;
+}
+
+.movie-list {
+  display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
 }
-
-.movie-box {
-  box-sizing: border-box;
-  width: 30%;
-  margin: 1rem;
-  padding: 1rem;
-  border: 1px solid #ccc;
-}
-
-
 </style>

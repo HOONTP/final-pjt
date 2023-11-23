@@ -103,6 +103,7 @@ CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 
     'x-csrftoken',  # Include if you're using CSRF protection
     'x-requested-with',
     'page',
+    'keyword',
 ]
 
 ROOT_URLCONF = 'finalpjt.urls'
@@ -185,9 +186,10 @@ STATICFILES_DIRS = [
 	BASE_DIR / 'static',
 ]
 
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = str(BASE_DIR / 'media')  # 문자열로 변환
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 # SPECTACULAR_SETTINGS = {
 #     'SCHEMA_PATH_FUNC': 'your_project.views.schema_view',
