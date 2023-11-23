@@ -4,11 +4,15 @@ from .models import Article, Comment, Reply
 class ArticleListSerializer(serializers.ModelSerializer):
     user_nickname = serializers.CharField(source='user.nickname', read_only=True)
     comment_reply_count = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
         fields = '__all__'
 
+    def get_title(self, obj):
+        # is_notice가 True이면 "공지 "를 추가한 제목을 반환, 아니면 기존 제목을 반환
+        return f"[공지] {obj.title}" if obj.is_notice else obj.title
     def get_comment_reply_count(self, obj):
         # obj는 현재 직렬화하고 있는 Article 인스턴스입니다.
         comment_count = obj.comments.filter(is_active=True).count()

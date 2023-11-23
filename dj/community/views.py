@@ -8,6 +8,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from rest_framework.views import APIView
+
 from .models import Article, Comment, Reply, Board
 from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, ReplySerializer
 # from .forms import ReviewForm, CommentForm
@@ -22,7 +26,6 @@ def article(request, community_pk=0, user_pk=0):
             articles = get_list_or_404(Article.objects.order_by('-is_notice', '-created_at'), board=community_pk)
         else:
             articles = get_list_or_404(Article.objects.order_by('-is_notice', '-created_at'), user=user_pk)
-        articles = articles
         serializer = ArticleListSerializer(articles, many=True, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -38,35 +41,50 @@ def article(request, community_pk=0, user_pk=0):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET', 'DELETE', 'PUT'])
+# @api_view(['GET', 'DELETE', 'PUT'])
+# @authentication_classes([])
+# @permission_classes([IsAuthenticatedOrReadOnly])
+# def article_detail(request, article_pk):
+#     # movie = Movie.objects.get(pk=movie_pk)
+#     article = get_object_or_404(Article, pk=article_pk)
+#     if request.method == 'GET':
+#         print(article)
+#         article.increment_counting()  # 조회 수 증가
+#         serializer = ArticleSerializer(article, context={'request': request})
+#         return Response(serializer.data)       
+#     elif request.method == 'DELETE':
+#         article.is_active = False
+#         article.save()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#     elif request.method == 'PUT':
+#         serializer = ArticleSerializer(article, data=request.data, partial=True)
+#         if serializer.is_valid(raise_exception=True):
+#             serializer.save()
+#             return Response(serializer.data)
+
+### 위 아래 같은건데 밑에는 60초 이내로 여러번 보내지 않음을 의미함
+@method_decorator(cache_page(60), name='dispatch')
 @permission_classes([IsAuthenticatedOrReadOnly])
-def article_detail(request, article_pk):
-    # movie = Movie.objects.get(pk=movie_pk)
-    article = get_object_or_404(Article, pk=article_pk)
-    if request.method == 'GET':
+class ArticleDetailView(APIView):
+    def get(self, request, article_pk):
+        article = get_object_or_404(Article, pk=article_pk)
         print(article)
         article.increment_counting()  # 조회 수 증가
         serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
-        
-    elif request.method == 'DELETE':
+       
+    def delete(self, request, article_pk):
+        article = get_object_or_404(Article, pk=article_pk)
         article.is_active = False
         article.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        # print(article.user, request.user)
-        # if article.user == request.user:
-        #     article.is_active = False
-        #     article.save()
-        #     return Response(status=status.HTTP_204_NO_CONTENT)
-        # else:
-        #     return Response(status=status.HTTP_400_BAD_REQUEST)
         
-    elif request.method == 'PUT':
+    def put(self, request, article_pk):
+        article = get_object_or_404(Article, pk=article_pk)
         serializer = ArticleSerializer(article, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
-
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @permission_classes([IsAuthenticatedOrReadOnly])

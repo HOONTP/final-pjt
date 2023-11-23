@@ -10,7 +10,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 
-from .serializers import UserSerializer, ProfileUpdateSerializer
+from .serializers import UserSerializer, ProfileUpdateSerializer, UserRegistrationSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
@@ -47,26 +47,27 @@ def person(request, user_pk=-1):
     if request.method == 'GET':
         serializer = UserSerializer(user, partial=True)
         return Response(serializer.data)
+    # elif request.method == 'POST':
+    #     serializer = UserRegistrationSerializer(data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         # 비밀번호를 해시로 설정
+    #         user = User.objects.create_user(
+    #             username=serializer.validated_data['username'],
+    #             email=serializer.validated_data.get('email', ''),
+    #             password=serializer.validated_data['password'],
+    #             nickname=serializer.validated_data['nickname']
+    #         )
+    #         user.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         print(serializer.errors)
     elif request.method == 'POST':
-        print(request.data)
-        serializer = UserSerializer(data=request.data)
+        serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print('b')
-            # 비밀번호를 해시로 설정
-            user = User.objects.create_user(
-                username=serializer.validated_data['username'],
-                email=serializer.validated_data.get('email', ''),
-                password=serializer.validated_data['password'],
-                nickname=serializer.validated_data['nickname']
-                
-            )
-            print(user)
-            user.first_name = serializer.validated_data.get('first_name', '')
-            user.last_name = serializer.validated_data.get('last_name', '')
-            user.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user = serializer.save()
+            return Response(UserRegistrationSerializer(user).data, status=status.HTTP_201_CREATED)
         else:
-            print(serializer.errors) 
+            print(serializer.errors)
     elif request.method == 'DELETE':
         if user == request.user:
             user.delete()
