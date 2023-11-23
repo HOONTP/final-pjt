@@ -26,6 +26,7 @@ TMDB_API_KEY = config('TMDB_API_KEY')
 
 @api_view(['GET', 'POST'])
 @authentication_classes([])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def movie_list(request, user_pk=0):
     User = get_user_model()
     if request.method == 'GET':
@@ -45,6 +46,7 @@ def movie_list(request, user_pk=0):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'DELETE', 'PUT'])
+@authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
@@ -66,6 +68,7 @@ def movie_detail(request, movie_pk):
 
 
 @api_view(['GET'])
+@authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def review_list(request, user_pk=2):
     reviews = get_list_or_404(Review, pk=user_pk)
@@ -73,6 +76,7 @@ def review_list(request, user_pk=2):
     return Response(serializer.data)
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
+@authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def review_detail(request, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
@@ -104,7 +108,7 @@ def review_detail(request, review_pk):
             return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def create_review(request, movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
     serializer = ReviewSerializer(data=request.data)
@@ -140,7 +144,7 @@ def add_user_to_movie_likes(request, movie_pk):
 from django.http import Http404
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def recommend_movie(request):#like_movies
     print(request.user)
     User = get_user_model()
@@ -190,7 +194,7 @@ def recommend_movie(request):#like_movies
 
 @api_view(['GET'])
 @authentication_classes([])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def search_movie(request):
     # keyword = request.headers.get('keyword') # headers의 정보 받는 방법
     keyword = request.GET.get('keyword', '')
@@ -204,7 +208,7 @@ def search_movie(request):
         serializer = MovieSerializer(searched_movies[:20], many=True, partial=True)
         return Response(serializer.data)
     else:
-        return JsonResponse({'message': '검색 결과가 없습니다.'})
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 '''
 def index(request):

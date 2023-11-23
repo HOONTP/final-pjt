@@ -4,9 +4,7 @@
     <button @click="search">🔍︎</button>
   </div>
 </template>
-<!-- <components
-:where:'community'
-/>  -->
+
 <script setup>
 import { ref } from 'vue'
 import { useCounterStore } from '@/stores/counter'
@@ -15,9 +13,8 @@ const store = useCounterStore()
 const keyword = ref('')
 
 const search = () => {
-  store.searchTool(keyword.value)
-}
-
+  store.searchArticle(keyword.value)
+};
 </script>
 
 <style scoped>
