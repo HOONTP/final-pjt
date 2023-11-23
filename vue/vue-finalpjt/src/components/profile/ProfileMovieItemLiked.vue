@@ -44,8 +44,7 @@ const truncateTitle = (overview, maxLength) => {
 <style scoped>
 
 .poster-wrapper {
-  width: 400px;
-  overflow: hidden;
+  max-width: 300px;
 }
 
 .movie-poster {

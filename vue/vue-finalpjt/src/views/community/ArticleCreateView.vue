@@ -9,8 +9,8 @@
         <div class="form-group">
           <label for="board">게시판:</label>
           <select name="board" v-model="community_pk" class="select-board">
-            <option value="1">전체</option>
-            <option value="2">인기</option>
+            <option value="1">코딩</option>
+            <option value="2">유머</option>
             <option value="3">리뷰</option>
             <option value="4">자유</option>
           </select>

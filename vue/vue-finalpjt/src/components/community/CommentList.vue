@@ -5,7 +5,9 @@
         <hr class="comment-divider">
         <div v-for="comment in store.article.comments" :key="comment.id" class="comment-container">
           <div class="comment-info">
-            <h4>{{ comment.user_nickname }}</h4>
+            <h4 @click="navigateToProfile(comment.user)">
+              {{ comment.user_nickname }}
+            </h4>
             <p class="comment-time">({{ formatCommentTime(comment.created_at) }})</p>
           </div>
 
@@ -52,7 +54,9 @@
             <div v-for="reply in comment.replies" :key="reply.id">
               <div class="comment-container">
                 <div class="comment-info">
-                  <h4>{{ reply.user_nickname }}</h4>
+                  <h4 @click="navigateToProfile(reply.user)">
+                    {{ reply.user_nickname }}
+                  </h4>
                   <p class="comment-time">({{ formatCommentTime(reply.created_at) }})</p>
                 </div>
 
@@ -92,11 +96,12 @@
 <script setup>
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
 const store = useCounterStore()
 const route = useRoute()
+const router = useRouter()
 const activeReplyForm = ref(null)  // 열린 답글 폼의 comment.id를 저장
 const newReply = ref('')           // 댓글 별로 새로 작성할 답글 내용
 
@@ -104,6 +109,10 @@ onMounted(() => {
   // 게시글 데이터 가져오기
   store.getArticle(route.params.id)
 })
+
+const navigateToProfile = (userId) => {
+  router.push({ name: 'ProfileView', params: { nickName: userId } })
+}
 
 const formatCommentTime = (timestamp) => {
   const currentDate = new Date()
@@ -250,6 +259,7 @@ const createReply = (commentId) => {
 
 .comment-info h4 {
   margin-right: 8px; /* 작성자와 content 사이의 간격 조절 */
+  cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
 }
 
 .comment-time {
@@ -322,6 +332,7 @@ const createReply = (commentId) => {
   margin-left: 10px;
   margin-right: 10px;
   cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
+  white-space: nowrap;
 }
 
 .reply-form {

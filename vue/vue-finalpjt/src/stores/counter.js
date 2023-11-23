@@ -87,7 +87,7 @@ export const useCounterStore = defineStore('counter', () => {
       .then(() => {
         token.value = null
         currentUser.value = 0
-        router.push({ name: 'ArticleView' })
+        router.push({ name: 'MovieView' })
       })
       .catch((err) => {
         console.log(err)

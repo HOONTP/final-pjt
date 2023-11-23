@@ -89,7 +89,7 @@ def review_detail(request, review_pk):
         serializer = MovieSerializer(movie, many=True)
         return Response(serializer.data) # 리뷰 좋아요시 디테일 무비를 다시보내기
     elif request.method == 'DELETE':
-        if Review.user == request.user:
+        if review.user == request.user:
             review.is_active = False
             review.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -107,7 +107,7 @@ def create_review(request, movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
     serializer = ReviewSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        serializer.save(movie=movie)
+        serializer.save(movie=movie, user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # @api_view(['POST'])

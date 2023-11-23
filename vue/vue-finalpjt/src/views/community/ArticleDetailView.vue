@@ -77,7 +77,7 @@
       </div>
       
       <!-- 댓글 section 컴포넌트 -->
-        <CommentSection />
+      <CommentSection />
     </div>
   </div>
 </template>
@@ -199,9 +199,9 @@ const deleteArticle = () => {
 const getBoardType = (board) => {
   switch (board) {
     case 1:
-      return '전체'
+      return '코딩'
     case 2:
-      return '인기'
+      return '유머'
     case 3:
       return '리뷰'
     case 4:
