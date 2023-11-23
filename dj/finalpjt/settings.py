@@ -104,6 +104,7 @@ CORS_ALLOW_HEADERS = [ # 없으니 안댐. 주석해도 됐던건 허가가 난 
     'x-requested-with',
     'page',
     'keyword',
+    'community_pk',
 ]
 
 ROOT_URLCONF = 'finalpjt.urls'

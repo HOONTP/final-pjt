@@ -46,8 +46,16 @@
 <script setup>
 import { useCounterStore } from '@/stores/counter'
 import { RouterView, RouterLink } from 'vue-router'
+import { onMounted } from 'vue'
 
 const store = useCounterStore()
+
+
+onMounted(async () => {
+  await store.getHotArticles();
+})
+
+
 </script>
 
 <style scoped>

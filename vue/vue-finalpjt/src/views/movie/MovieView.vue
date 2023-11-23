@@ -2,7 +2,7 @@
   <div>
     <h3>검색 기능</h3>
     <p>
-      <SearchData />
+      <SearchMovie />
     </p>
     <div class="movie-container">
       <!-- 좌측: MovieCard -->
@@ -34,14 +34,14 @@ import { useCounterStore } from '@/stores/counter'
 // import axios from 'axios'
 import MovieCard from '@/components/movie/MovieCard.vue'
 import MovieRecommend from '@/components/movie/MovieRecommend.vue'
-import SearchData from '../../components/commons/SearchData.vue'
+import SearchMovie from '../../components/commons/SearchMovie.vue'
 const store = useCounterStore()
 const router = useRouter()
 const page = ref(1)
 
 onMounted(async () => {
-    store.getMovies(page.value)
-    console.log(store.movies);
+  await store.getMovies(page.value)
+  console.log(store.movies);
 });
 
 const prevPage = () => {

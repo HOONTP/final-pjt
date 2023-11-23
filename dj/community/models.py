@@ -41,7 +41,7 @@ class Article(BaseModel): # 이거 하나로 여러개의 게시판을 만들 �
 
 
 class Comment(BaseModel):
-    content = models.TextField()
+    content = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(
@@ -54,7 +54,7 @@ class Comment(BaseModel):
 
 
 class Reply(BaseModel):
-    content = models.TextField()
+    content = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE

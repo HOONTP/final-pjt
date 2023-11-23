@@ -48,7 +48,7 @@
             class="edit-button"
             :to="{
               name: 'ArticleEditView',
-              params: { id: store.article.id },
+              // params: { id: store.article.id },
             }">
             수정하기
           </RouterLink>|
@@ -84,7 +84,9 @@ const router = useRouter()
 
 onMounted(() => {
   // 게시글 데이터 가져오기
+  if (route) {
   store.getArticle(route.params.id)
+  }
 })
 
 const formatDateTime = (timestamp) => {
