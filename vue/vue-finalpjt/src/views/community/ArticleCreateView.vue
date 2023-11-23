@@ -4,8 +4,8 @@
     <CommunityNav />
     
     <div class="container">
-      <h2>새로운 글 등록</h2>
       <form @submit.prevent="createArticle" class="form-container">
+        <h2>새로운 글 등록</h2>
         <div class="form-group">
           <label for="board">게시판:</label>
           <select name="board" v-model="community_pk" class="select-board">
@@ -57,21 +57,6 @@ const title = ref(null)
 const content = ref(null)
 const community_pk = ref(store.articles[0].board)
 
-// const getBoardType = (community_pk) => {
-//   switch (community_pk) {
-//     case 1:
-//       return 'CommunityTotalView'
-//     case 2:
-//       return 'CommunityHotView'
-//     case 3:
-//       return 'CommunityReviewView'
-//     case 4:
-//       return 'CommunityFreeView'
-//     default:
-//       return ''
-//   }
-// }
-
 const createArticle = function () {
   axios({
     method: 'post',
@@ -102,13 +87,15 @@ const cancelArticle = function () {
 
 <style scoped>
 .container {
-  margin: 0 20px;
+  margin: 0 5%;
   margin-top: 120px;
 }
 
 .form-container {
-  width: 80%;
+  width: 50%;
   margin: auto;
+  min-width: 600px; /* 예시로 설정한 최소 너비 */
+  max-width: 800px; /* 예시로 설정한 최대 너비 */
 }
 
 .form-group {

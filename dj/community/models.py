@@ -21,8 +21,8 @@ class Article(BaseModel): # 이거 하나로 여러개의 게시판을 만들 �
     is_active  = models.BooleanField(default=True)
     is_notice  = models.BooleanField(default=False)
     counting = models.PositiveIntegerField(default=0)  # 조회 수 필드 추가
-    def increment_views(self):
-        self.views += 1
+    def increment_counting(self):
+        self.counting += 1
         self.save()
 
     def save(self, *args, **kwargs):
