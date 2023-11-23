@@ -1,68 +1,89 @@
 <template>
   <div>
     <div v-if="store.article && store.article.comments && store.article.comments.length > 0">
-      <h2>댓글 목록</h2>
       <ul>
-        <li v-for="comment in store.article.comments" :key="comment.id">
-          <p>작성자 : {{ comment.user_nickname }}</p>
-          <p>작성일 : {{ comment.created_at }}</p>
-          <p>{{ comment.content }}</p>
-
-          <!-- 내가 작성한 댓글만 수정/삭제 버튼 존재 -->
-          <div v-if="store.currentUser.user_id === comment.user">
-            <!-- 댓글 수정 버튼 -->
-            <button @click="editCommentReply(comment.id)">수정</button>
-            <!-- 댓글 삭제 버튼 -->
-            <button @click="deleteCommentReply(comment.id)">삭제</button>
+        <hr class="comment-divider">
+        <div v-for="comment in store.article.comments" :key="comment.id" class="comment-container">
+          <div class="comment-info">
+            <h4>{{ comment.user_nickname }}</h4>
+            <p class="comment-time">({{ formatCommentTime(comment.created_at) }})</p>
           </div>
 
-          <!-- 답글 버튼 -->
-          <button @click="toggleReplyForm(comment.id)">답글</button>
+          <p class="comment-content">{{ comment.content }}</p>
 
-          <!-- 답글 작성 폼 -->
-          <div v-if="activeReplyForm === comment.id">
-            <textarea v-model.trim="newReply" id="reply"></textarea>
-            <button @click="createReply(comment.id)">등록</button>
+          <div class="buttons">
+            <!-- 답글 버튼 -->
+            <p class="button" @click="toggleReplyForm(comment.id)"><strong>답글쓰기</strong></p>
+
+            <!-- 답글 작성 폼 -->
+            <div v-if="activeReplyForm === comment.id" class="reply-form">
+              <div class="reply-area">
+                <textarea
+                  v-model.trim="newReply"
+                  id="reply"
+                  placeholder="답글을 입력하세요..."
+                  class="reply-textarea">
+                </textarea>
+                <button @click="createReply(comment.id)" class="submit-button">등록</button>
+              </div>
+            </div>
+
+            <!-- 내가 작성한 댓글만 수정/삭제 버튼 존재 -->
+            <div v-if="store.currentUser.user_id === comment.user" class="my-buttons">
+              <!-- 댓글 수정 버튼 -->
+              <p class="button" @click="editCommentReply(comment.id)">수정하기</p>|
+              <!-- 댓글 삭제 버튼 -->
+              <p class="button" @click="deleteCommentReply(comment.id)">삭제하기</p>
+            </div>
           </div>
           
           <!-- 댓글 좋아요 버튼 -->
-          <button @click="toggleLike(comment.user, comment.id)">
-            {{ comment.like_users && comment.like_users.includes(store.currentUser.user_id) ? '좋아요 취소' : '좋아요' }}
+          <button
+            :class="{ 'like-button': true, 'liked': isLiked(comment.like_users, store.currentUser.user_id) }"
+            @click="toggleLike(comment.user, comment.id)">
+            👍
             {{ comment.like_users ? comment.like_users.length : 0 }}
           </button>
-          <br>
+         
+          <hr class="comment-divider">
           
           <!----------------------------- 답글 목록 시작 ----------------------------->
-          <ul>
-            <li v-for="reply in comment.replies" :key="reply.id">
-              <div>(답글)</div>
-              <div>
-                <p>작성자 : {{ reply.user_nickname }}</p>
-                <p>작성일 : {{ reply.created_at }}</p>
-                <p>{{ reply.content }}</p>
+          <ul class="reply-list">
+            <div v-for="reply in comment.replies" :key="reply.id">
+              <div class="comment-container">
+                <div class="comment-info">
+                  <h4>{{ reply.user_nickname }}</h4>
+                  <p class="comment-time">({{ formatCommentTime(reply.created_at) }})</p>
+                </div>
+
+                <p class="comment-content">{{ reply.content }}</p>
 
                 <!-- 내가 작성한 답글만 수정/삭제 버튼 존재 -->
-                <div v-if="store.currentUser.user_id === reply.user">
+                <div v-if="store.currentUser.user_id === reply.user" class="my-buttons">
                   <!-- 답글 수정 버튼 -->
-                  <button @click="editCommentReply(comment.id, reply.id)">수정</button>
+                  <p class="button" @click="editCommentReply(comment.id, reply.id)">수정하기</p>|
                   <!-- 답글 삭제 버튼 -->
-                  <button @click="deleteCommentReply(comment.id, reply.id)">삭제</button>
+                  <p class="button" @click="deleteCommentReply(comment.id, reply.id)">삭제하기</p>
                 </div>
 
                 <!-- 답글 좋아요 버튼 -->
-                <button @click="toggleLike(reply.user, comment.id, reply.id)">
-                  {{ reply.like_users && reply.like_users.includes(store.currentUser.user_id) ? '좋아요 취소' : '좋아요' }}
+                <button
+                  :class="{ 'like-button': true, 'liked': isLiked(reply.like_users, store.currentUser.user_id) }"
+                  @click="toggleLike(reply.user, comment.id, reply.id)">
+                  👍
                   {{ reply.like_users ? reply.like_users.length : 0 }}
                 </button>
               </div>
-            </li>
+              <hr class="comment-divider">
+            </div>
           </ul>
           <!----------------------------- 답글 목록 끝 ----------------------------->
 
-        </li>
+        </div>
       </ul>
     </div>
     <div v-else>
+      <hr class="comment-divider">
       <p>댓글이 없습니다.</p>
     </div>
   </div>
@@ -83,6 +104,24 @@ onMounted(() => {
   // 게시글 데이터 가져오기
   store.getArticle(route.params.id)
 })
+
+const formatCommentTime = (timestamp) => {
+  const currentDate = new Date()
+  const commentDate = new Date(timestamp)
+  const elapsedMillis = currentDate - commentDate;
+  const elapsedMinutes = Math.floor(elapsedMillis / (60 * 1000))
+  const elapsedHours = Math.floor(elapsedMillis / (60 * 60 * 1000))
+
+  if (elapsedMinutes < 1) {
+    return '방금 전';
+  } else if (elapsedMinutes < 60) {
+    return `${elapsedMinutes}분 전`
+  } else if (elapsedHours < 24) {
+    return `${elapsedHours}시간 전`
+  } else {
+    return `${commentDate.getFullYear()}-${String(commentDate.getMonth() + 1).padStart(2, '0')}-${String(commentDate.getDate()).padStart(2, '0')} ${String(commentDate.getHours()).padStart(2, '0')}:${String(commentDate.getMinutes()).padStart(2, '0')}`
+  }
+}
 
 const editCommentReply = (commentId, replyId=0) => {
   // 댓글/답글 수정
@@ -138,6 +177,10 @@ const deleteCommentReply = (commentId, replyId=0) => {
   }
 }
 
+const isLiked = (likeUsers, userId) => {
+  return likeUsers && likeUsers.includes(userId);
+}
+
 const toggleLike = (userId, commentId, replyId=0) => {
   // 댓글/답글 좋아요/좋아요 취소 요청 보내기
   if (userId === store.currentUser.user_id) {
@@ -191,6 +234,7 @@ const createReply = (commentId) => {
       // 답글 작성 후에는 입력 필드 초기화
       newReply.value = ''
       store.getArticle(route.params.id)
+      activeReplyForm.value = activeReplyForm.value === commentId ? null : commentId
     })
     .catch((err) => {
       console.log('답글 생성 에러:', err)
@@ -199,5 +243,120 @@ const createReply = (commentId) => {
 </script>
 
 <style scoped>
+* {
+  white-space: nowrap;
+}
+
+.comment-info {
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬을 위해 추가 */
+}
+
+.comment-info h4 {
+  margin-right: 8px; /* 작성자와 content 사이의 간격 조절 */
+}
+
+.comment-time {
+  margin-left: 8px; /* 작성일과 작성자 사이의 간격 조절 */
+  font-size: 0.8em; /* 작성일 폰트 크기 조절 */
+}
+
+.comment-content {
+  margin-top: 8px; /* content 위쪽 간격 조절 */
+  height: 80px;
+}
+
+.comment-container {
+  margin-bottom: 20px;
+  padding: 10px;
+  position: relative; /* 상대적인 위치 설정 */
+}
+
+.like-button {
+  position: absolute; /* 절대적인 위치 설정 */
+  color: black;
+  padding: 8px 8px;
+  top: 10px; /* 상단에 위치시킴 */
+  right: 10px; /* 오른쪽에 위치시킴 */
+  border-radius: 5px;
+  border: 1px solid #ddd; /* 테두리 추가 */
+  background-color: #ddd;
+  transition: border-color 0.3s;
+  cursor: pointer;
+}
+
+.like-button.liked {
+  background-color: #e74c3c; /* 좋아요 눌렀을 때의 배경색 */
+  color: #fff; /* 좋아요 눌렀을 때의 글자색 */
+}
+
+.like-button:hover {
+  border-color: black; /* 호버 시 테두리 색상 변경 */
+}
+
+.comment-divider {
+  margin-top: 20px; /* hr 위쪽 여백 설정 */
+  margin-bottom: 20px; /* hr 아래쪽 여백 설정 */
+  border: none; /* 기존 border 제거 */
+  border-top: 1px solid #ddd; /* 새로운 연한 회색 border 추가 */
+}
+
+.reply-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.reply-list .comment-container {
+  margin-left: 20px; /* 답글 목록은 좀 더 들여쓰기 */
+  background-color: #f2f2f2; 
+}
+
+.buttons {
+  display: flex;
+}
+
+.my-buttons {
+  display: flex;
+  margin-left: auto; /* 현재 위치에서 오른쪽으로 이동하도록 설정 */
+  justify-content: flex-end
+}
+
+.button {
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
+}
+
+.reply-form {
+  width: 100%;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reply-area {
+  display: flex;
+  gap: 20px;
+}
+
+.reply-textarea {
+  flex: 1;
+}
+
+.submit-button {
+  background-color: #4CAF50;
+  width: 60px;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px; 
+  transition: background-color 0.3s;
+  border: none;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
 
 </style>

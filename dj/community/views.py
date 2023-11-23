@@ -18,10 +18,10 @@ def article(request, community_pk=0, user_pk=0):
     if request.method == 'GET':
         if user_pk == 0:
             # movies = Movie.objects.all()
-            articles = get_list_or_404(Article, board=community_pk)
+            articles = get_list_or_404(Article.objects.order_by('-is_notice', '-created_at'), board=community_pk)
         else:
-            articles = get_list_or_404(Article, user=user_pk)
-        articles = articles.order_by('-is_notice', '-created_at')
+            articles = get_list_or_404(Article.objects.order_by('-is_notice', '-created_at'), user=user_pk)
+        articles = articles
         serializer = ArticleListSerializer(articles, many=True, partial=True)
         return Response(serializer.data)
     elif request.method == 'POST':
