@@ -14,8 +14,10 @@
       <div class="profile-header">
         <h1>{{ store.profile.data.nickname }}</h1>
         <div class="buttons">
-          <button v-if="store.currentUser.user_id == props.user_pk && !is_edit" @click="startEditingProfile" class="edit-button">프로필 수정</button>
-          <button v-else @click="finishEditingProfile" class="edit-button">수정 완료</button>
+          <div v-if="store.currentUser.user_id == props.user_pk">
+            <button v-if="!is_edit" @click="startEditingProfile" class="edit-button">프로필 수정</button>
+            <button v-else @click="finishEditingProfile" class="edit-button">수정 완료</button>
+          </div>
           <button
             v-if="store.currentUser.user_id != props.user_pk"
             @click="toggleFollow(props.user_pk)"
@@ -63,7 +65,7 @@ import { useCounterStore } from '@/stores/counter'
 
 const store = useCounterStore()
 const route = useRoute()
-const props = defineProps(['user_pk'])
+const props = defineProps(['user_pk', 'nickName'])
 const is_edit = ref(false)
 const selectedImage = ref(null);
 const editedBio = ref(null)
@@ -98,8 +100,8 @@ const toggleFollow = (userId) => {
     },
   })
     .then(() => {
-      // 좋아요/좋아요 취소 요청이 성공하면 게시글 데이터를 다시 불러와 갱신
-      store.getArticle(route.params.id)
+      // 좋아요/좋아요 취소 요청이 성공하면 페이지 리로드
+      window.location.reload();
     })
     .catch((err) => {
       console.error('팔로우 토글 에러:', err)
