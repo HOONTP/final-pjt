@@ -13,7 +13,7 @@
         </div>
         <p>{{ article.user_nickname }}</p>
         <p>{{ formatCreatedAt(article.created_at) }}</p>
-        <p>조회수</p>
+        <p>{{ article.counting }}</p>
         <p>{{ getLikeUsersLength(article) }}</p>
       </div>
       <hr>
