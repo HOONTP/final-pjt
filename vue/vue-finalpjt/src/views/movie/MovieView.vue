@@ -6,20 +6,15 @@
     </p>
     <div class="movie-container">
       <!-- 좌측: MovieCard -->
-      <div class="movie-list">
+      <div v-if="store.movies" class="movie-list">
         <div v-for="movie in store.movies" :key="movie.id" class="movie-box">
           <MovieCard :movie="movie" />
         </div>
       </div>
-
-      <!-- 우측: MovieRecommend -->
-      <div class="recommend-container">
-        <MovieRecommend />
-      </div>
     </div>
 
     <!-- 페이지 네비게이션 버튼 -->
-    <div class="pagination-container">
+    <div>
       <button @click="prevPage" class="pagination-button">이전</button>
       <span>{{ page }}</span>
       <button @click="nextPage" class="pagination-button">다음</button>
@@ -33,7 +28,6 @@ import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 // import axios from 'axios'
 import MovieCard from '@/components/movie/MovieCard.vue'
-import MovieRecommend from '@/components/movie/MovieRecommend.vue'
 import SearchMovie from '../../components/commons/SearchMovie.vue'
 const store = useCounterStore()
 const router = useRouter()
