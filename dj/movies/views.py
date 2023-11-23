@@ -161,6 +161,8 @@ def recommend_movie(request):#like_movies
                 genres[genre.id] += 1
         value_lst = []
         for movie in movies:
+            if movie in like_movies:
+                continue
             genre_value = 0
             if movie.director in directors and movie not in like_movies:
                 for genre, value in genres.items():
@@ -169,7 +171,7 @@ def recommend_movie(request):#like_movies
                     if movie.genre_ids.filter(pk=genre).exists() and genre_value < cal_value:
                         # print(cal_value)
                         genre_value = cal_value
-            sums_value = min(genre_value, 50) + movie.popularity + (movie.vote_average * 5)
+            sums_value = min(genre_value, 50) + min(movie.popularity, 50) + (movie.vote_average * 5)
             value_lst.append([sums_value, movie])
         sorted_list = sorted(value_lst, key=lambda x: x[0], reverse=True)
         show_lst = []

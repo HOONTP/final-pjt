@@ -71,6 +71,7 @@ export const useCounterStore = defineStore('counter', () => {
         token.value = res.data.token
         currentUser.value = res.data
         router.push({ name: 'MovieView' })
+        getProfile(currentUser.value.user_id)
       })
       .catch((err) => {
         console.log(err)

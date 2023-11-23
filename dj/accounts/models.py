@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from rest_framework.authtoken.models import Token
 from PIL import Image, ImageSequence
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -25,7 +27,7 @@ class CustomUser(AbstractUser):
                 new_size = (max_width, max_height)
 
                 # GIF 파일의 경우 모든 프레임에 대해 처리
-                if image.is_animated:
+                if hasattr(image, 'is_animated') and image.is_animated:
                     frames = [frame.copy() for frame in ImageSequence.Iterator(image)]
                     for i, frame in enumerate(frames):
                         frame.thumbnail(new_size)
@@ -41,4 +43,7 @@ class CustomUser(AbstractUser):
                 else:
                     # 정적 이미지인 경우
                     image.thumbnail(new_size)
-                    image.save(self.profile_image.path)
+                    with BytesIO() as buffer:
+                        image.save(buffer, format="JPEG")
+                        buffer.seek(0)
+                        self.profile_image.save(self.profile_image.name, ContentFile(buffer.read()), save=False)

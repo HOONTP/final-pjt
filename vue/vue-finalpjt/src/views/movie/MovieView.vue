@@ -36,6 +36,8 @@ const page = ref(1)
 onMounted(async () => {
   await store.getMovies(page.value)
   console.log(store.movies);
+  
+  console.log(store.profile.data, 'a')
 });
 
 const prevPage = () => {
