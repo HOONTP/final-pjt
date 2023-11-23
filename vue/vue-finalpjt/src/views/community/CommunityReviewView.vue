@@ -13,7 +13,7 @@
         </RouterLink>
       </div>
 
-      <ArticleList :articles="store.articles" />
+      <ArticleList v-if="store.articles" :articles="store.articles" />
     </div>
     <div>
       <SearchArticle />

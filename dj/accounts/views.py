@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404, get_list_or_404
 
@@ -38,25 +38,7 @@ class ProfileUpdateView(APIView):
         else:
             return Response(serializer.errors, status=400)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def update_profile(request):
-    if request.method == 'POST':
-        bio = request.POST.get('bio', '')
-        
-        # 이미지 파일 처리
-        profile_picture = request.FILES.get('profile_picture', None)
-        if profile_picture:
-            user_profile = UserProfile.objects.get(user=request.user)
-            user_profile.profile_picture = profile_picture
-            user_profile.save()
-
-        return JsonResponse({'message': '프로필이 업데이트되었습니다.'})
-    else:
-        return JsonResponse({'message': 'POST 요청만 허용됩니다.'})
-
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
-@authentication_classes([])
 def person(request, user_pk=-1):
     User = get_user_model()
     print(user_pk)
@@ -97,7 +79,6 @@ def person(request, user_pk=-1):
                 return Response(serializer.data)
 
 @api_view(['POST', 'DELETE'])
-@authentication_classes([])
 def log(request):
     if request.method == 'POST':
         username = request.data.get('username')
@@ -126,7 +107,7 @@ def log(request):
         return JsonResponse({'message': 'logout success'})
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def follow(request, user_pk):
     User = get_user_model()
     person = User.objects.get(pk=user_pk)
@@ -138,4 +119,3 @@ def follow(request, user_pk):
         else:
             person.followers.add(request.user)
             return Response({'message': 'unfollow success'})
-

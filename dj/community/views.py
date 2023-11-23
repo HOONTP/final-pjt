@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 
 from .models import Article, Comment, Reply, Board
 from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, ReplySerializer
@@ -49,13 +50,16 @@ def article_detail(request, article_pk):
         return Response(serializer.data)       
         
     elif request.method == 'DELETE':
-        print(article.user, request.user)
-        if article.user == request.user:
-            article.is_active = False
-            article.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        article.is_active = False
+        article.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        # print(article.user, request.user)
+        # if article.user == request.user:
+        #     article.is_active = False
+        #     article.save()
+        #     return Response(status=status.HTTP_204_NO_CONTENT)
+        # else:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
         
     elif request.method == 'PUT':
         serializer = ArticleSerializer(article, data=request.data, partial=True)
@@ -120,7 +124,7 @@ def reply_detail(request, comment_pk, reply_pk=0):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def like_article(request, article_pk):
     article = get_object_or_404(Article, id=article_pk)
     # 현재 사용자가 이미 좋아요를 했다면 제거, 그렇지 않다면 추가
@@ -134,7 +138,7 @@ def like_article(request, article_pk):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def like_comment(request, comment_pk):
     comment = get_object_or_404(Comment, id=comment_pk)
     if request.user in comment.like_users.all():
@@ -147,7 +151,7 @@ def like_comment(request, comment_pk):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticatedOrReadOnly])
 def like_reply(request, reply_pk):
     reply = get_object_or_404(Reply, id=reply_pk)
 

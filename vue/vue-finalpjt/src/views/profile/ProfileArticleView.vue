@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="store.profile.data">
     <ProfileArticleItem 
       v-for="article in store.profile.data.user_articles"
       :key="article.id"
