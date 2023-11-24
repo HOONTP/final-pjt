@@ -17,7 +17,8 @@ from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerial
 # from .forms import ReviewForm, CommentForm
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
+@authentication_classes([])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def article(request, community_pk=0, user_pk=0):
     if request.method == 'GET':
@@ -28,7 +29,11 @@ def article(request, community_pk=0, user_pk=0):
             articles = get_list_or_404(Article.objects.order_by('-is_notice', '-created_at'), user=user_pk)
         serializer = ArticleListSerializer(articles, many=True, partial=True)
         return Response(serializer.data)
-    elif request.method == 'POST':
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def createarticle(request, community_pk=0):
+    if request.method == 'POST':
         print(request.data)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -63,7 +68,7 @@ def article(request, community_pk=0, user_pk=0):
 #             return Response(serializer.data)
 
 ### 위 아래 같은건데 밑에는 60초 이내로 여러번 보내지 않음을 의미함
-@method_decorator(cache_page(1), name='dispatch')
+@method_decorator(cache_page(0.2), name='dispatch')
 @permission_classes([IsAuthenticatedOrReadOnly])
 class ArticleDetailView(APIView):
     def get(self, request, article_pk):
@@ -72,7 +77,7 @@ class ArticleDetailView(APIView):
         article.increment_counting()  # 조회 수 증가
         serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
-       
+    
     def delete(self, request, article_pk):
         article = get_object_or_404(Article, pk=article_pk)
         article.is_active = False
@@ -201,8 +206,9 @@ def search_articles(keyword, community_pk):
     articles = Article.objects.filter(
         Q(title__icontains=keyword) |
         Q(content__icontains=keyword) |
-        Q(user__nickname__icontains=keyword)
-    ).filter(board=community_pk).distinct().order_by("-created_at")  # 중복된 결과 방지
+        Q(user__nickname__icontains=keyword) |
+        Q(is_notice = True)
+    ).filter(board=community_pk).distinct().order_by('-is_notice', "-created_at")  # 중복된 결과 방지
     return articles
 
 
@@ -214,7 +220,8 @@ def hot_article(request):
         like_users_count=Count('like_users'),
         comments_count=Count('comments')
     ).filter(
-        Q(like_users_count__gte=5) | Q(comments_count__gte=5)
+        Q(like_users_count__gte=5) | Q(comments_count__gte=5),
+        is_notice=False
     ).order_by('-created_at')
     serializer = ArticleListSerializer(filtered_articles[:10], many=True)
     return Response(serializer.data)

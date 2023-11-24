@@ -41,6 +41,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True, required=False) # 관계모델에서 related값과 동일하게
     user_nickname = serializers.CharField(source='user.nickname', read_only=True)
+    profile_image = serializers.CharField(source='user.profile_image', read_only=True)
     class Meta:
         model = Article
         fields = '__all__'

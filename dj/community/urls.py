@@ -3,7 +3,8 @@ from . import views
 
 app_name = 'community'
 urlpatterns = [
-    path('<int:community_pk>/articles/<int:user_pk>/', views.article), # 모든 게시글 조회 및 입력
+    path('<int:community_pk>/articles/<int:user_pk>/', views.article), # 모든 게시글 조회
+    path('<int:community_pk>/articles/', views.createarticle), # 입력
     # path('articles/<int:article_pk>/', views.article_detail), # 게시글 상세 조회
     path('articles/<int:article_pk>/', views.ArticleDetailView.as_view(), name='article-detail'), # 게시글 상세 조회
     path('comments/', views.comment_detail), #'GET' 내가 쓴 댓글 보기

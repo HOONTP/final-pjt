@@ -3,13 +3,13 @@
     <header class="main-header">
       <nav>
         <h1>HoonChul</h1>
-        <RouterLink class="nav-link" :to="{ name: 'MovieView' }">영화</RouterLink>
+        <RouterLink @click="pageReset" class="nav-link" :to="{ name: 'MovieView' }">영화</RouterLink>
         <RouterLink class="nav-link" :to="{ name: 'CommunityTotalView' }">커뮤니티</RouterLink>
 
         <!---------------------- 로그인 한 경우 ---------------------->
         <div v-if="store.isLogin" class="nav-right">
           <p class="welcome-message">
-            환영합니다, <strong>{{ store.profile.data.nickname }}</strong> 님!
+            환영합니다, <strong>{{ store.currentUser.nickname }}</strong> 님!
           </p>
           <RouterLink
             v-if="store.currentUser.user_id"
@@ -73,8 +73,15 @@ import ArticleHot from '@/components/community/ArticleHot.vue'
 const store = useCounterStore()
 
 onMounted(async () => {
+  store.moviePage = 1
   await store.getHotArticles()
 })
+
+const pageReset = function () {
+  store.moviePage = 1
+  store.getMovies(store.moviePage)
+  // location.reload();
+}
 
 const confirmLogOut = function () {
   if (window.confirm('...벌써 떠나는거야?')) {

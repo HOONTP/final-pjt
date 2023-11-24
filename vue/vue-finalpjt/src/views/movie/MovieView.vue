@@ -13,11 +13,12 @@
     </div>
 
     <!-- 페이지 네비게이션 버튼 -->
-    <div class="pagination-buttons">
+    <div class="pagination-buttons" v-if="store.isSearch === false">
       <button @click="prevPage" class="pagination-button">이전</button>
-      <span class="page-number">{{ page }}</span>
+      <span class="page-number">{{ store.moviePage }}</span>
       <button @click="nextPage" class="pagination-button">다음</button>
     </div>
+    <div v-else></div>
   </div>
 </template>
 
@@ -32,25 +33,25 @@ import SearchMovie from '../../components/commons/SearchMovie.vue'
 
 const store = useCounterStore()
 const router = useRouter()
-const page = ref(1)
+// const page = ref(1)
 
 onMounted(async () => {
-  await store.getMovies(page.value)
+  await store.getMovies(store.moviePage)
   console.log(store.movies);
   console.log(store.profile.data, 'a')
 });
 
 const prevPage = () => {
-  if (page.value > 1) {
-    page.value -= 1
-    store.getMovies(page.value)
+  if (store.moviePage > 1) {
+    store.moviePage -= 1
+    store.getMovies(store.moviePage)
     scrollToTop()
   }
 };
 
 const nextPage = () => {
-  page.value += 1
-  store.getMovies(page.value)
+  store.moviePage = store.moviePage + 1
+  store.getMovies(store.moviePage)
   scrollToTop()
 };
 

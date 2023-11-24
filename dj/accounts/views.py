@@ -98,6 +98,7 @@ def log(request):
                 'user_id': user.id,
                 'username': user.username,
                 'email': user.email,
+                'nickname': user.nickname,
             })
         else:
             # 사용자 인증 실패 시 에러 응답

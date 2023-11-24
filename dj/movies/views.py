@@ -87,8 +87,8 @@ def review_detail(request, review_pk):
         else:
             review.like_users.add(user)
         # 좋아요 누른 목록을 줘야함
-        movie = get_object_or_404(Movie, pk=review.movie)
-        serializer = MovieSerializer(movie, many=True)
+        movie = get_object_or_404(Movie, pk=review.movie.id)
+        serializer = MovieSerializer(movie)
         return Response(serializer.data) # 리뷰 좋아요시 디테일 무비를 다시보내기
     elif request.method == 'DELETE':
         if review.user == request.user:
@@ -160,7 +160,7 @@ def recommend_movie(request):#like_movies
     if len(like_movies) >= 5:
         directors = set()
         for movie in like_movies:
-            directors.add(get_object_or_404(Director, pk=movie.director_id))
+            directors.add(get_object_or_404(Director, pk=movie.director_id) if Director.objects.filter(pk=movie.director_id).exists() else None)
             movie_genres = movie.genre_ids.all()
             for genre in movie_genres:
                 genres[genre.id] += 1
@@ -176,8 +176,8 @@ def recommend_movie(request):#like_movies
                     if movie.genre_ids.filter(pk=genre).exists() and genre_value < cal_value:
                         # print(cal_value)
                         genre_value = cal_value
-            if movie.popularity and movie.vote_average:
-                sums_value = min(genre_value, 50) + min(movie.popularity, 50) + (movie.vote_average * 5)
+            if movie.popularity>0 and movie.vote_average>0:
+                sums_value = min(genre_value, 50) + min(movie.popularity, 80) + (movie.vote_average * 5)
             else:
                 sums_value = min(genre_value, 50) + 50
             value_lst.append([sums_value, movie])

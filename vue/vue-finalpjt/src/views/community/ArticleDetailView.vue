@@ -4,19 +4,20 @@
     <CommunityNav />
     
     <div class="container">
-      <div class="detail" v-if="store.article">
+      <div class="detail" v-if="store.article.id">
         <h2>{{ getBoardType(store.article.board) }} 게시판</h2>
 
         <div v-if="store.article">
           <h1>{{ store.article.title }}</h1>
-
           <div class="article_info">
             <div class="profile-picture">
+              <!-- v-if="store.profile.data.profile_image" -->
               <img
-                v-if="store.profile.data.profile_image && !is_edit"
-                :src="store.API_URL+store.profile.data.profile_image"
+                v-if="store.article.profile_image"
+                :src="store.API_URL+'/media/'+store.article.profile_image"
                 alt="프로필 사진"
                 class="profile-image"
+                :key="store.article.profile_image"
                 @click="navigateToProfile(store.article.user)"
               />
             </div>
@@ -47,7 +48,7 @@
         <!-- 좋아요 버튼 -->
         <button
           :class="{ 'like-button': true, 'liked': isLiked(store.article.like_users, store.currentUser.user_id) }"
-          @click="toggleLike(store.article.user_nickname)">
+          @click="toggleLike(store.article.user)">
           👍
           {{ store.article.like_users ? store.article.like_users.length : 0 }}
         </button>
@@ -75,7 +76,10 @@
           </p>
         </div>
       </div>
-      
+      <!-- 비로그인 시 -->
+      <div v-else>
+        <p class="login-message">로그인이 필요합니다.</p>
+      </div>
       <!-- 댓글 section 컴포넌트 -->
       <CommentSection />
     </div>
@@ -85,7 +89,7 @@
 <script setup>
 import axios from 'axios'
 import { RouterLink } from 'vue-router'
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRoute, useRouter } from 'vue-router'
 import CommunityNav from '@/components/community/CommunityNav.vue'
@@ -95,18 +99,26 @@ const store = useCounterStore()
 const route = useRoute()
 const router = useRouter()
 
-onMounted(async() => {
-  // 게시글 데이터 가져오기
+onMounted( () => {
   if (route) {
+    try {
+      // 게시글을 가져오기
+      store.getArticle(route.params.id);
+      console.log(store.article); // 새로운 게시글의 정보가 출력되어야 함
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  // ;
+});
+
+const onIdChange = (newId, oldId) => {
+  console.log('새로운 글 ID:', newId);
+  // id가 변경될 때 필요한 다른 작업을 수행하세요.
   store.getArticle(route.params.id)
   }
 
-  try {
-    await store.getProfile(store.article.user)
-  } catch (err) {
-    console.error(err)
-  }
-})
+watch(() => route.params.id, onIdChange, { immediate: true });
 
 const navigateToProfile = (userId) => {
   router.push({ name: 'ProfileView', params: { nickName: userId } })
@@ -146,7 +158,7 @@ const isLiked = (likeUsers, userId) => {
 const toggleLike = (userId) => {
   // 게시글 좋아요/좋아요 취소 요청 보내기
 
-  if (userId === store.currentUser.username) {
+  if (userId === store.currentUser.user_id) {
     alert('니가 쓴 글인데..? 양심좀')
     return
   }
@@ -337,4 +349,8 @@ h2 {
   cursor: pointer;  /* 마우스 올리면 손가락 형태로 변경 */
 }
 
+.login-message {
+    font-size: 30px; /* 원하는 크기로 조절 */
+    /* 추가적인 스타일링을 원하면 여기에 추가 */
+  }
 </style>
