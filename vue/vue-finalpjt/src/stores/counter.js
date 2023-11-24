@@ -71,6 +71,7 @@ export const useCounterStore = defineStore('counter', () => {
         token.value = res.data.token
         currentUser.value = res.data
         router.push({ name: 'MovieView' })
+        getProfile(currentUser.value.user_id)
       })
       .catch((err) => {
         console.log(err)
@@ -191,6 +192,7 @@ export const useCounterStore = defineStore('counter', () => {
     .then((res) => {
       // recommendmovies.value = null
       recommendmovies.value = res.data
+      console.log(res.data)
     })
     .catch((err) => {
       console.log(err)
@@ -245,8 +247,8 @@ export const useCounterStore = defineStore('counter', () => {
       method: 'get',
       url: `${API_URL}/reviews/`,
       headers: {
-        // Authorization: `Token ${token.value}`
-        movie: movieId
+        Authorization: `Token ${token.value}`,
+        // movie: movieId
       }
     })
       .then((res) =>{

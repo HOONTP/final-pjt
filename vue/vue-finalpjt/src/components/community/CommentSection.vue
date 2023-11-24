@@ -10,7 +10,8 @@
         <textarea
           v-model.trim="newComment"
           id="comment"
-          placeholder="댓글을 입력하세요...">
+          placeholder="댓글을 입력하세요..."
+          @keydown.enter.prevent="createComment">
         </textarea>
         <button @click="createComment" class="submit-button">등록</button>
       </div>

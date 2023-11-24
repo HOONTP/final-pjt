@@ -19,6 +19,8 @@ import requests
 from django.db import IntegrityError
 from decouple import config
 
+from django.views.decorators.cache import cache_page
+
 from django.utils.timezone import make_aware
 from datetime import datetime
 import math
@@ -89,7 +91,7 @@ def review_detail(request, review_pk):
         serializer = MovieSerializer(movie, many=True)
         return Response(serializer.data) # 리뷰 좋아요시 디테일 무비를 다시보내기
     elif request.method == 'DELETE':
-        if Review.user == request.user:
+        if review.user == request.user:
             review.is_active = False
             review.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -106,8 +108,10 @@ def review_detail(request, review_pk):
 def create_review(request, movie_pk):
     movie = Movie.objects.get(pk=movie_pk)
     serializer = ReviewSerializer(data=request.data)
+    print(request)
+    print(serializer)
     if serializer.is_valid(raise_exception=True):
-        serializer.save(movie=movie)
+        serializer.save(movie=movie, user=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 # @api_view(['POST'])
@@ -138,6 +142,7 @@ def add_user_to_movie_likes(request, movie_pk):
 from django.http import Http404
 
 @api_view(['GET'])
+@cache_page(5)
 @permission_classes([IsAuthenticatedOrReadOnly])
 def recommend_movie(request):#like_movies
     print(request.user)
@@ -161,6 +166,8 @@ def recommend_movie(request):#like_movies
                 genres[genre.id] += 1
         value_lst = []
         for movie in movies:
+            if movie in like_movies:
+                continue
             genre_value = 0
             if movie.director in directors and movie not in like_movies:
                 for genre, value in genres.items():
@@ -169,7 +176,10 @@ def recommend_movie(request):#like_movies
                     if movie.genre_ids.filter(pk=genre).exists() and genre_value < cal_value:
                         # print(cal_value)
                         genre_value = cal_value
-            sums_value = min(genre_value, 50) + movie.popularity + (movie.vote_average * 5)
+            if movie.popularity and movie.vote_average:
+                sums_value = min(genre_value, 50) + min(movie.popularity, 50) + (movie.vote_average * 5)
+            else:
+                sums_value = min(genre_value, 50) + 50
             value_lst.append([sums_value, movie])
         sorted_list = sorted(value_lst, key=lambda x: x[0], reverse=True)
         show_lst = []
