@@ -37,6 +37,11 @@
 
     <div class="container">
       <h3>좋아요 한 리뷰</h3>
+      <ProfileReviewItem 
+        v-for="review in store.profile.data.like_reviews"
+        :key="review.id"
+        :review="review"
+      />
     </div>
 
   </div>
@@ -49,6 +54,7 @@ import ProfileArticleItem from '@/components/profile/ProfileArticleItem.vue'
 import ProfileCommentItem from '@/components/profile/ProfileCommentItem.vue'
 import ProfileReplyItem from '@/components/profile/ProfileReplyItem.vue'
 import ProfileMovieItemLiked from '@/components/profile/ProfileMovieItemLiked.vue'
+import ProfileReviewItem from '@/components/profile/ProfileReviewItem.vue'
 
 const store = useCounterStore()
 const props = defineProps(['user_pk'])

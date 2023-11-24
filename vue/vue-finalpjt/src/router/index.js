@@ -23,6 +23,8 @@ import ProfileView from '@/views/profile/ProfileView.vue'
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
 import ProfileLikeView from '@/views/profile/ProfileLikeView.vue'
+import ProfileReviewView from '@/views/profile/ProfileReviewView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,7 +81,7 @@ const router = createRouter({
 
     // Movie
     {
-      path: '/movie',
+      path: '/',
       name: 'MovieView',
       component: MovieView
     },
@@ -110,6 +112,11 @@ const router = createRouter({
       path: '/profile/:username/like',
       name: 'ProfileLikeView',
       component: ProfileLikeView
+    },
+    {
+      path: '/profile/:username/review',
+      name: 'ProfileReviewView',
+      component: ProfileReviewView
     },
   ]
 })

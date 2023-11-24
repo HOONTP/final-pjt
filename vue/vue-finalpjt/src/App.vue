@@ -2,12 +2,15 @@
   <div>
     <header class="main-header">
       <nav>
-        <h1>Hoon&Hochul</h1>
+        <h1>HoonChul</h1>
         <RouterLink class="nav-link" :to="{ name: 'MovieView' }">영화</RouterLink>
         <RouterLink class="nav-link" :to="{ name: 'CommunityTotalView' }">커뮤니티</RouterLink>
 
         <!---------------------- 로그인 한 경우 ---------------------->
         <div v-if="store.isLogin" class="nav-right">
+          <p class="welcome-message">
+            환영합니다, <strong>{{ store.profile.data.nickname }}</strong> 님!
+          </p>
           <RouterLink
             v-if="store.currentUser.user_id"
             class="nav-link"
@@ -16,7 +19,7 @@
               params: { nickName: store.currentUser.user_id }
             }">프로필
           </RouterLink>
-          <form @submit.prevent="store.logOut">
+          <form @submit.prevent="confirmLogOut">
             <input type="submit" value="로그아웃" class="logout-button">
           </form>
         </div>
@@ -39,7 +42,24 @@
 
       </nav>
     </header>
-    <RouterView class="router-view" />
+
+    <div class="app-container">
+      <!-- 왼쪽 네비게이션 -->
+      <div class="side-nav left">
+        <MovieRecommend />
+      </div>
+      
+      <!-- 메인 콘텐츠 영역 -->
+      <div class="main-content">
+        <RouterView />
+      </div>
+
+      <!-- 오른쪽 네비게이션 -->
+      <div class="side-nav right">
+        <ArticleHot />
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -47,19 +67,43 @@
 import { useCounterStore } from '@/stores/counter'
 import { RouterView, RouterLink } from 'vue-router'
 import { onMounted } from 'vue'
+import MovieRecommend from '@/components/movie/MovieRecommend.vue'
+import ArticleHot from '@/components/community/ArticleHot.vue'
 
 const store = useCounterStore()
 
-
 onMounted(async () => {
-  await store.getHotArticles();
+  await store.getHotArticles()
 })
 
+const confirmLogOut = function () {
+  if (window.confirm('...벌써 떠나는거야?')) {
+    store.logOut()
+  }
+}
 
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+
+.app-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.side-nav {
+  width: 300px;
+  padding: 20px;
+}
+
+.main-content {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 h1 {
   font-family: 'Kdam Thmor Pro', sans-serif;
@@ -136,8 +180,10 @@ nav {
   border-color: #c0392b;
 }
 
-.router-view {
-  margin-top: 60px;  /* header의 높이 */
+.welcome-message {
+  font-size: 18px;
+  color: #fff;
+  white-space: nowrap;
 }
 </style>
 

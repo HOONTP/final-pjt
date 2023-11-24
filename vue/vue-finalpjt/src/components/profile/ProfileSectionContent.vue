@@ -22,10 +22,12 @@ import { useCounterStore } from '@/stores/counter'
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
 import ProfileLikeView from '@/views/profile/ProfileLikeView.vue'
+import ProfileReviewView from '@/views/profile/ProfileReviewView.vue'
 
 const profileSections = [
   { label: '게시글', routeName: 'ProfileArticleView', component: ProfileArticleView },
   { label: '댓글', routeName: 'ProfileCommentView', component: ProfileCommentView },
+  { label: '리뷰', routeName: 'ProfileReviewView', component: ProfileReviewView },
   { label: '좋아요', routeName: 'ProfileLikeView', component: ProfileLikeView },
 ]
 
