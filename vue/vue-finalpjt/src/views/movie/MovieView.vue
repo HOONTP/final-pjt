@@ -1,9 +1,8 @@
 <template>
-  <div>
-    <h3>검색 기능</h3>
-    <p>
-      <SearchMovie />
-    </p>
+  <!-- 검색창 -->
+  <SearchMovie />
+
+  <div class="container">
     <div class="movie-container">
       <!-- 좌측: MovieCard -->
       <div v-if="store.movies" class="movie-list">
@@ -14,9 +13,9 @@
     </div>
 
     <!-- 페이지 네비게이션 버튼 -->
-    <div>
+    <div class="pagination-buttons">
       <button @click="prevPage" class="pagination-button">이전</button>
-      <span>{{ page }}</span>
+      <span class="page-number">{{ page }}</span>
       <button @click="nextPage" class="pagination-button">다음</button>
     </div>
   </div>
@@ -26,9 +25,11 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
+
 // import axios from 'axios'
 import MovieCard from '@/components/movie/MovieCard.vue'
 import SearchMovie from '../../components/commons/SearchMovie.vue'
+
 const store = useCounterStore()
 const router = useRouter()
 const page = ref(1)
@@ -44,7 +45,6 @@ const prevPage = () => {
     page.value -= 1
     store.getMovies(page.value)
     scrollToTop()
-
   }
 };
 
@@ -62,13 +62,57 @@ const scrollToTop = () => {
 </script>
 
 <style scoped>
+.container {
+  margin: auto;
+  margin-top: 120px;
+  min-width: 800px;
+  max-width: 800px;
+}
+
 .movie-container {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap; /* 줄 바꿈을 허용하여 다음 줄에 이어서 표시 */
 }
 
 .movie-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* MovieBox들을 한 줄에 여러 개 배치 */
+  justify-content: space-between; /* 좌우로 공간 분배하여 정렬 */
 }
+
+.movie-box {
+  width: calc(33.33% - 10px); /* 한 줄에 3개씩 나오도록 폭 조절, 여백 고려 */
+  margin-bottom: 20px; /* 아래 여백 추가 */
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.pagination-button {
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-button:hover {
+  background-color: #555;
+}
+
+.page-number {
+  font-size: 18px;
+  margin: 0 10px;
+  color: #333;
+}
+
 </style>

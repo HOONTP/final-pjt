@@ -5,7 +5,7 @@
 
     <div class="container">
       <div class="header">
-        <h2>전체 게시판</h2>
+        <h2>코딩 게시판</h2>
         
         <!-- 글쓰기 버튼 -->
         <RouterLink :to="{ name: 'ArticleCreateView' }" class="write-button">

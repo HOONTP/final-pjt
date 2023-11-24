@@ -16,8 +16,8 @@
 import { RouterLink } from 'vue-router'
 
 const articleSections = [
-  { id: 1, label: '전체 게시판', routeName: 'CommunityTotalView' },
-  { id: 2, label: '인기 게시판', routeName: 'CommunityHotView' },
+  { id: 1, label: '코딩 게시판', routeName: 'CommunityTotalView' },
+  { id: 2, label: '유머 게시판', routeName: 'CommunityHotView' },
   { id: 3, label: '리뷰 게시판', routeName: 'CommunityReviewView' },
   { id: 4, label: '자유 게시판', routeName: 'CommunityFreeView' },
 ]
@@ -28,11 +28,12 @@ const articleSections = [
 .section-links {
   display: flex;
   position: fixed;
+  justify-content: center;
   top: 60px;
   left: 0;
   width: 100%;
   height: 40px;
-  background-color: rgba(51, 51, 51, 0.8); /* 검정색의 80% 투명도 */
+  background-color: rgba(51, 51, 51, 0.8);
   padding: 10px 40px;
   z-index: 1000;
 }
