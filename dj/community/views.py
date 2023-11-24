@@ -63,7 +63,7 @@ def article(request, community_pk=0, user_pk=0):
 #             return Response(serializer.data)
 
 ### 위 아래 같은건데 밑에는 60초 이내로 여러번 보내지 않음을 의미함
-@method_decorator(cache_page(60), name='dispatch')
+@method_decorator(cache_page(1), name='dispatch')
 @permission_classes([IsAuthenticatedOrReadOnly])
 class ArticleDetailView(APIView):
     def get(self, request, article_pk):
