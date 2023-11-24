@@ -3,8 +3,8 @@
     <ProfileSectionUser :user_pk="user_pk" />
     <hr class="hr">
     <ProfileSectionContent
-      v-if="store.currentUser.user_id == user_pk"
       :user_pk="user_pk" />
+      <!-- v-if="store.currentUser.user_id == user_pk" -->
   </div>
 </template>
 

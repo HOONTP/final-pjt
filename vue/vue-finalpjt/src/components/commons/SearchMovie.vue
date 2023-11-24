@@ -16,12 +16,15 @@
 <script setup>
 import { ref } from 'vue'
 import { useCounterStore } from '@/stores/counter'
+import { useRouter } from 'vue-router'
 
 const store = useCounterStore()
 const keyword = ref('')
+const router = useRouter()
 
 const search = () => {
   store.searchMovie(keyword.value)
+  router.push({ name: 'MovieView' })
 };
 </script>
 

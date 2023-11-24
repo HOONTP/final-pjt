@@ -60,7 +60,7 @@ const community_pk = ref(store.articles[0].board)
 const createArticle = function () {
   axios({
     method: 'post',
-    url: `${store.API_URL}/community/${community_pk.value}/articles/0/`,
+    url: `${store.API_URL}/community/${community_pk.value}/articles/`,
     data: {
       title: title.value,
       content: content.value,

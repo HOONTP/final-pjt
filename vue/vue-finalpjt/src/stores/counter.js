@@ -10,6 +10,7 @@ export const useCounterStore = defineStore('counter', () => {
   // Accounts
   const token = ref(null)
   const currentUser = ref(0)
+  const currentUser_nick = ref(null)
   const isLogin = computed(() => {
     // 로그인 여부 확인
     if (token.value === null) {
@@ -31,6 +32,8 @@ export const useCounterStore = defineStore('counter', () => {
   const recommendmovies = ref([])
   const LikedMovies = ref([])
   const movieReviews = ref([])
+  const moviePage = ref(1)
+  const isSearch = ref(false)
 
   // Profile
   const profile = ref([])
@@ -38,6 +41,24 @@ export const useCounterStore = defineStore('counter', () => {
   // Search
   const now_gps = ref()
 
+  // 로그아웃
+  const logOut = function () {
+    axios({
+      method: 'delete',
+      url: `${API_URL}/accounts/log/`,
+    })
+      .then(() => {
+        token.value = null
+        LikedMovies.value = []
+        recommendmovies.value = []
+        article.value = []
+        currentUser.value = 0
+        router.push({ name: 'MovieView' })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
   // 회원가입
   const signUp = function (payload) {
     const { nickname, username, password, password2 } = payload
@@ -70,6 +91,7 @@ export const useCounterStore = defineStore('counter', () => {
       .then((res) => {
         token.value = res.data.token
         currentUser.value = res.data
+        currentUser_nick.value = 0
         router.push({ name: 'MovieView' })
         getProfile(currentUser.value.user_id)
       })
@@ -78,21 +100,6 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  // 로그아웃
-  const logOut = function () {
-    axios({
-      method: 'delete',
-      url: `${API_URL}/accounts/log/`,
-    })
-      .then(() => {
-        token.value = null
-        currentUser.value = 0
-        router.push({ name: 'MovieView' })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
 
   // 게시판 종류 별/작성자 별 게시글 목록 조회
   const getArticles = function (community_pk=0, user_pk=0) {
@@ -110,6 +117,7 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(err)
       })
   }
+
 
   // 특정 게시글 조회
   const getArticle = function (article_pk) {
@@ -174,6 +182,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) =>{
         movies.value = res.data
+        isSearch.value = false
       })
       .catch((err) => {
         console.log(err)
@@ -181,7 +190,7 @@ export const useCounterStore = defineStore('counter', () => {
   }
   // 추천 영화 조회
   const getRecommendMovie = async function () {
-    console.log(currentUser.value)
+    // console.log(currentUser.value)
     await axios({
       method: 'get',
       url: `${API_URL}/movies/recommend/`,
@@ -202,8 +211,8 @@ export const useCounterStore = defineStore('counter', () => {
   // 영화 좋아요 목록 감시 => 추천 영화 업데이트
   watch(LikedMovies, (newValue, oldValue) => {
     getRecommendMovie()
-    console.log(newValue, 'new')
-    console.log(oldValue, 'old')
+    // console.log(newValue, 'new')
+    // console.log(oldValue, 'old')
   })
 
   // 영화 좋아요 및 취소
@@ -275,7 +284,8 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) => {
         movies.value = res.data
-        console.log(res.data)
+        // console.log(res.data)
+        isSearch.value = true
       })
       .catch((err) => {
         console.log(err)
@@ -298,7 +308,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((res) => {
         articles.value = res.data
-        console.log(res.data)
+        // console.log(res.data)
       })
       .catch((err) => {
         console.log(err)
@@ -329,7 +339,7 @@ export const useCounterStore = defineStore('counter', () => {
 
     // Accounts
     signUp, logIn, logOut,
-    token, currentUser, isLogin,
+    token, currentUser, isLogin, currentUser_nick,
 
     // Community
     getArticles, getArticle, getLikedArticles, getHotArticles,
@@ -337,7 +347,7 @@ export const useCounterStore = defineStore('counter', () => {
 
     // Movie
     getMovies, getMovie, getRecommendMovie, likeMovie, getMovieReview,
-    movies, movie, recommendmovies, LikedMovies, movieReviews,
+    movies, movie, recommendmovies, LikedMovies, movieReviews, moviePage, isSearch,
 
     // Profile
     getProfile, 

@@ -1,12 +1,14 @@
 <template>
   <div id="profile-container">
     <div id="profile-picture">
+      <div v-if="is_edit || !is_edit">
       <img
-        v-if="store.profile.data.profile_image && !is_edit"
+        v-if="store.profile.data.profile_image && typeof is_edit !== 'undefined' && !is_edit"
         :src="store.API_URL+store.profile.data.profile_image"
         alt="프로필 사진"
         class="profile-image"
       />
+      </div>
       <!-- {{ store.API_URL+store.profile.data.profile_image }} -->
       <input type="file" v-if="is_edit && store.currentUser.user_id == props.user_pk" ref="imageInput" @change="handleImageChange" />
     </div>

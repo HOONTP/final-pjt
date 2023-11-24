@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="section-links">
-      <div v-for="section in articleSections" :key="section.id">
+      <div @click="go(section)" v-for="section in articleSections" :key="section.id">
         <RouterLink
           :to="{ name: section.routeName }"
           class="section-router-link">
@@ -13,7 +13,11 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { useCounterStore } from '@/stores/counter'
+
+const router = useRouter()
+const store = useCounterStore()
 
 const articleSections = [
   { id: 1, label: '코딩 게시판', routeName: 'CommunityTotalView' },
@@ -21,6 +25,11 @@ const articleSections = [
   { id: 3, label: '리뷰 게시판', routeName: 'CommunityReviewView' },
   { id: 4, label: '자유 게시판', routeName: 'CommunityFreeView' },
 ]
+const go = function (sectioned) {
+  if (store.articles[0].board === sectioned.id) {
+  location.reload();
+  }
+}
 
 </script>
 
