@@ -23,8 +23,9 @@ import ProfileCommentItem from '@/components/profile/ProfileCommentItem.vue'
 import ProfileReplyItem from '@/components/profile/ProfileReplyItem.vue'
 
 const store = useCounterStore()
-const props = defineProps(['user_pk'])
-
+const props = defineProps({
+  'user_pk':String
+})
 onMounted(async () => {
   // 특정 유저의 프로필 데이터 가져오기
   try {

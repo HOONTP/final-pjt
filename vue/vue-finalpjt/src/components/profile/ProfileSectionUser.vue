@@ -117,15 +117,15 @@ const startEditingProfile = () => {
 
 const finishEditingProfile = () => {
   const formData = new FormData();
-  console.log(selectedImage.value)
+  // console.log(selectedImage.value)
 
   if (selectedImage.value) {
     formData.append('profile_image', selectedImage.value);
-    console.log(selectedImage.value)
+    // console.log(selectedImage.value)
   }
   if (editedBio.value) {
     formData.append('bio', editedBio.value);
-    console.log(editedBio.value)
+    // console.log(editedBio.value)
 
   }
 
@@ -136,7 +136,7 @@ const finishEditingProfile = () => {
     },
   })
   .then(response => {
-    console.log(response.data);
+    // console.log(response.data);
     // 수정이 완료되었을 때의 추가 작업 수행
     is_edit.value = false
     store.getProfile(props.user_pk)

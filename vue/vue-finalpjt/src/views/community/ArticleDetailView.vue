@@ -104,7 +104,7 @@ onMounted( () => {
     try {
       // 게시글을 가져오기
       store.getArticle(route.params.id);
-      console.log(store.article); // 새로운 게시글의 정보가 출력되어야 함
+      // console.log(store.article); // 새로운 게시글의 정보가 출력되어야 함
     } catch (err) {
       console.error(err);
     }
@@ -113,7 +113,7 @@ onMounted( () => {
 });
 
 const onIdChange = (newId, oldId) => {
-  console.log('새로운 글 ID:', newId);
+  // console.log('새로운 글 ID:', newId);
   // id가 변경될 때 필요한 다른 작업을 수행하세요.
   store.getArticle(route.params.id)
   }

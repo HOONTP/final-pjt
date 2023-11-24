@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, markRaw  } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import ProfileArticleView from '@/views/profile/ProfileArticleView.vue'
 import ProfileCommentView from '@/views/profile/ProfileCommentView.vue'
@@ -32,8 +32,11 @@ const profileSections = [
 ]
 
 const store = useCounterStore()
-const props = defineProps(['user_pk'])
-const currentSection = ref(profileSections[0])
+const props = defineProps({
+  'user_pk':String
+})
+const currentSection = ref(profileSections)
+// const currentSection = ref(profileSections[0]); [0]을 넣어서 warning이엇음
 
 onMounted(async () => {
   // 특정 유저의 프로필 데이터 가져오기

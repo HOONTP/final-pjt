@@ -37,8 +37,8 @@ const router = useRouter()
 
 onMounted(async () => {
   await store.getMovies(store.moviePage)
-  console.log(store.movies);
-  console.log(store.profile.data, 'a')
+  // console.log(store.movies);
+  // console.log(store.profile.data, 'a')
 });
 
 const prevPage = () => {

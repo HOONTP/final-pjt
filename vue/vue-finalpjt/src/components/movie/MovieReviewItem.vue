@@ -13,7 +13,8 @@
           />
         </div>
         <div class="review-item">
-          <p class="nickname" @click="navigateToProfile(review.user)">{{ review.user_nickname }} ⭐⭐⭐⭐⭐</p>
+          <p class="nickname" @click="navigateToProfile(review.user)">{{ review.user_nickname }}</p>
+          <!-- ⭐⭐⭐⭐⭐ -->
           <p class="content">{{ review.content }}</p>
         </div>
           <!-- 내가 작성한 리뷰만 삭제 버튼 존재 -->

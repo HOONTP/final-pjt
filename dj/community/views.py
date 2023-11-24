@@ -67,13 +67,12 @@ def createarticle(request, community_pk=0):
 #             serializer.save()
 #             return Response(serializer.data)
 
-### 위 아래 같은건데 밑에는 60초 이내로 여러번 보내지 않음을 의미함
+### 위 아래 같은건데 밑에는 초 이내로 여러번 보내지 않음을 의미함
 @method_decorator(cache_page(0.2), name='dispatch')
 @permission_classes([IsAuthenticatedOrReadOnly])
 class ArticleDetailView(APIView):
     def get(self, request, article_pk):
         article = get_object_or_404(Article, pk=article_pk)
-        print(article)
         article.increment_counting()  # 조회 수 증가
         serializer = ArticleSerializer(article, context={'request': request})
         return Response(serializer.data)       
@@ -218,7 +217,8 @@ def search_articles(keyword, community_pk):
 def hot_article(request):
     filtered_articles = Article.objects.annotate(
         like_users_count=Count('like_users'),
-        comments_count=Count('comments')
+        comments_count=Count('comments', filter=Q(comments__is_active=True)),
+        replys_count=Count('comments__replies')
     ).filter(
         Q(like_users_count__gte=5) | Q(comments_count__gte=5),
         is_notice=False

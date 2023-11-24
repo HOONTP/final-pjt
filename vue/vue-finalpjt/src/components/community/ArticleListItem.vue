@@ -9,7 +9,7 @@
             class="title">
             {{ truncateTitle(article.title, 30) }}
           </RouterLink>
-          <p class="comment">{{ getCommentsLength(article) }}</p>
+          <p class="comment" v-if="article.comment_reply_count !== 0">  {{ `[${article.comment_reply_count}]` }}</p>
         </div>
         <p>{{ article.user_nickname }}</p>
         <p>{{ formatCreatedAt(article.created_at) }}</p>
@@ -47,10 +47,11 @@ const formatCreatedAt = (createdAt) => {
   }
 }
 
-const getCommentsLength = (article) => {
-  // article.comments가 정의되지 않았을 때를 고려하여 길이를 가져오는 함수
-  return article.comments ? `[${article.comments.length}]` : '';
-}
+// const getCommentsLength = (article) => {
+//   // article.comments가 정의되지 않았을 때를 고려하여 길이를 가져오는 함수
+//   console.log(article)
+//   return article.comments ? `[${article.comments.length}]` : '';
+// }
 
 const getLikeUsersLength = (article) => {
   // article.like_users가 정의되지 않았을 때를 고려하여 길이를 가져오는 함수

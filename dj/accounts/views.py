@@ -28,15 +28,16 @@ class ProfileUpdateView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request, *args, **kwargs):
-        serializer = ProfileUpdateSerializer(data=request.data)
-        if serializer.is_valid():
-            # 사용자 모델 업데이트
-            request.user.profile_image = serializer.validated_data.get('profile_image', '')
-            request.user.introduce = serializer.validated_data.get('bio', '')
-            request.user.save()
-            return Response({'message': 'Profile updated successfully'})
-        else:
-            return Response(serializer.errors, status=400)
+            serializer = ProfileUpdateSerializer(data=request.data)
+            if serializer.is_valid():
+                # 사용자 모델 업데이트
+                request.user.profile_image = serializer.validated_data.get('profile_image', '')
+                request.user.introduce = serializer.validated_data.get('bio', '')
+                request.user.save()
+                return Response({'message': 'Profile updated successfully'})
+            else:
+                return Response(serializer.errors, status=400)
+
 
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 def person(request, user_pk=-1):

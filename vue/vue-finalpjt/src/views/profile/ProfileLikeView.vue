@@ -57,7 +57,9 @@ import ProfileMovieItemLiked from '@/components/profile/ProfileMovieItemLiked.vu
 import ProfileReviewItem from '@/components/profile/ProfileReviewItem.vue'
 
 const store = useCounterStore()
-const props = defineProps(['user_pk'])
+const props = defineProps({
+  'user_pk':String
+})
 
 onMounted(async () => {
   // 특정 유저의 프로필 데이터 가져오기
