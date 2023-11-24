@@ -7,6 +7,7 @@ from django.core.files.base import ContentFile
 
 # Create your models here.
 class CustomUser(AbstractUser):
+    id = models.AutoField(primary_key=True)  # 자동으로 증가하는 기본 키 설정
     followings = models.ManyToManyField('self', symmetrical=False, related_name='followers')
     nickname = models.CharField(max_length=255, unique=True)
     introduce = models.CharField(max_length=100, null=True, blank=True)

@@ -24,7 +24,8 @@
                   v-model.trim="newReply"
                   id="reply"
                   placeholder="답글을 입력하세요..."
-                  class="reply-textarea">
+                  class="reply-textarea"
+                  @keydown.enter.prevent="createReply(comment.id)">
                 </textarea>
                 <button @click="createReply(comment.id)" class="submit-button">등록</button>
               </div>

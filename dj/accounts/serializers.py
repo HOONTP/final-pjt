@@ -11,6 +11,33 @@ class ProfileUpdateSerializer(serializers.Serializer):
     bio = serializers.CharField(required=False)  # 자기소개 필드 추가
 
 
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'password', 'password2', 'nickname', 'introduce', 'profile_image']
+
+    def validate(self, data):
+        password = data.get('password')
+        password2 = data.get('password2')
+
+        if password != password2:
+            raise serializers.ValidationError("비밀번호와 비밀번호 확인이 일치하지 않습니다.")
+        return data
+
+    def create(self, validated_data):
+        user = get_user_model().objects.create(
+            username=validated_data['username'],
+            email=validated_data.get('email', ''),
+            nickname=validated_data['nickname'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
@@ -40,9 +67,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 #forms.py처럼 두개로 나눠서 해야될까 ??
 class UserSerializer(serializers.ModelSerializer):
-    User = get_user_model()
-    password = serializers.CharField(write_only=True)  # 패스워드는 쓰기 전용으로 설정
-    password2 = serializers.CharField(write_only=True)
+    user = get_user_model()
     like_articles = serializers.SerializerMethodField()
     like_comments = serializers.SerializerMethodField()
     like_replies = serializers.SerializerMethodField()
@@ -52,7 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
     user_comments = serializers.SerializerMethodField()
     user_replies = serializers.SerializerMethodField()
     user_reviews = serializers.SerializerMethodField()
-    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True, source='followings')
     
     class Meta:
         model = get_user_model()
